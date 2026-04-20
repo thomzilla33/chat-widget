@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Widget Detail — AIMS-OS</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; background:#0d0d0d; color:#fff; font-size:13px; display:flex; height:100vh; overflow:hidden; }
+
+/* ── LEFT NAV ── */
+.leftnav {
+  width:48px; flex-shrink:0; background:#111; border-right:1px solid rgba(255,255,255,0.08);
+  display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:4px;
+}
+.leftnav-logo {
+  width:28px; height:28px; border-radius:7px; background:#2563eb;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:#fff; margin-bottom:8px; flex-shrink:0;
+}
+.nav-icon {
+  width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,0.32); cursor:pointer; transition:all 0.15s;
+}
+.nav-icon:hover { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.7); }
+.nav-icon.active { background:rgba(255,255,255,0.1); color:#fff; }
+.nav-icon svg { width:16px; height:16px; }
+.nav-spacer { flex:1; }
+.nav-bottom { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.nav-settings {
+  width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,0.32); cursor:pointer; transition:all 0.15s;
+}
+.nav-settings:hover { color:rgba(255,255,255,0.7); }
+.nav-settings svg { width:16px; height:16px; }
+
+/* ── MAIN ── */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+/* Top bar */
+.topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; height:52px; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0;
+}
+.topbar-left { display:flex; align-items:center; gap:10px; }
+.brand {
+  display:flex; align-items:center; gap:7px;
+  font-size:13px; font-weight:600; color:rgba(255,255,255,0.85); cursor:pointer;
+}
+.brand-logo {
+  width:24px; height:24px; border-radius:6px; background:#2563eb;
+  display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;
+}
+.brand svg { width:12px; height:12px; color:rgba(255,255,255,0.4); }
+.breadcrumb {
+  display:flex; align-items:center; gap:6px;
+  font-size:13px; color:rgba(255,255,255,0.38);
+}
+.breadcrumb svg { width:12px; height:12px; }
+.bc-item { cursor:pointer; }
+.bc-item:hover { color:rgba(255,255,255,0.65); }
+.bc-current { color:rgba(255,255,255,0.75); font-weight:500; }
+
+.topbar-center {
+  flex:1; max-width:420px; margin:0 auto;
+}
+.search-box {
+  width:100%; display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px; padding:7px 12px; cursor:text;
+}
+.search-box svg { width:13px; height:13px; color:rgba(255,255,255,0.28); flex-shrink:0; }
+.search-box span { font-size:13px; color:rgba(255,255,255,0.28); flex:1; }
+.search-kbd {
+  display:flex; align-items:center; gap:2px;
+  padding:2px 6px; background:rgba(255,255,255,0.07); border-radius:4px;
+  font-size:10px; color:rgba(255,255,255,0.3);
+}
+
+.topbar-right { display:flex; align-items:center; gap:8px; }
+.icon-btn {
+  width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,0.45); cursor:pointer; transition:all 0.15s;
+}
+.icon-btn:hover { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.75); }
+.icon-btn svg { width:16px; height:16px; }
+
+.create-btn {
+  display:flex; align-items:center; gap:6px; padding:6px 14px;
+  background:#2563eb; border:none; border-radius:8px;
+  color:#fff; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;
+}
+.create-btn:hover { background:#1d4ed8; }
+.create-btn svg { width:14px; height:14px; }
+
+.avatar-btn {
+  width:32px; height:32px; border-radius:50%; background:#0ea5e9;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; cursor:pointer; flex-shrink:0;
+}
+
+/* ── CONTENT AREA ── */
+.content-area { flex:1; display:flex; overflow:hidden; }
+
+/* Page */
+.page { flex:1; display:flex; flex-direction:column; overflow:hidden; padding:0 24px; }
+
+/* Page header */
+.page-header {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  padding:20px 0 0; flex-shrink:0;
+}
+.page-title-row { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+.page-title { font-size:22px; font-weight:700; color:#fff; }
+.badge-active {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:500;
+  background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); color:#10b981;
+}
+.badge-active-dot { width:5px; height:5px; border-radius:50%; background:#10b981; }
+.page-sub { font-size:12px; color:rgba(255,255,255,0.35); }
+
+.page-actions { display:flex; align-items:center; gap:8px; }
+.btn {
+  display:flex; align-items:center; gap:6px; padding:7px 16px;
+  border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; border:1px solid; font-family:inherit;
+  transition:all 0.15s;
+}
+.btn svg { width:14px; height:14px; }
+.btn-ghost { background:transparent; border-color:rgba(255,255,255,0.15); color:rgba(255,255,255,0.7); }
+.btn-ghost:hover { border-color:rgba(255,255,255,0.3); color:#fff; }
+.btn-primary { background:#2563eb; border-color:#2563eb; color:#fff; }
+.btn-primary:hover { background:#1d4ed8; }
+.btn-dots { background:transparent; border-color:rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); padding:7px 10px; }
+
+/* Tabs */
+.tabs { display:flex; border-bottom:1px solid rgba(255,255,255,0.08); margin-top:16px; flex-shrink:0; }
+.tab {
+  padding:10px 16px 11px; font-size:13px; font-weight:500;
+  color:rgba(255,255,255,0.4); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:all 0.15s; white-space:nowrap;
+}
+.tab:hover { color:rgba(255,255,255,0.7); }
+.tab.active { color:#fff; border-bottom-color:#2563eb; }
+
+/* Tab content */
+.tab-content { flex:1; overflow-y:auto; padding:24px 0; }
+.tab-content::-webkit-scrollbar { width:4px; }
+.tab-content::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* Metric cards grid */
+.metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; margin-bottom:24px; }
+.metric-card { background:#111; padding:20px 22px; position:relative; }
+.metric-icon {
+  width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;
+}
+.metric-icon svg { width:15px; height:15px; }
+.metric-value { font-size:28px; font-weight:700; color:#fff; line-height:1; margin-bottom:4px; }
+.metric-label { font-size:12px; color:rgba(255,255,255,0.42); }
+.metric-change {
+  position:absolute; top:20px; right:20px;
+  font-size:11px; font-weight:500;
+}
+.mc-up { color:#10b981; }
+.mc-neutral { color:rgba(255,255,255,0.3); }
+.metric-tag {
+  position:absolute; top:20px; right:20px;
+  font-size:10px; font-weight:500; color:rgba(255,255,255,0.28);
+}
+
+/* Section label */
+.section-label {
+  font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em;
+  color:rgba(255,255,255,0.28); margin-bottom:12px;
+}
+
+/* Info grid */
+.info-grid { border:1px solid rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; margin-bottom:24px; }
+.info-row { display:flex; border-bottom:1px solid rgba(255,255,255,0.06); }
+.info-row:last-child { border-bottom:none; }
+.info-cell { flex:1; padding:14px 18px; border-right:1px solid rgba(255,255,255,0.06); }
+.info-cell:last-child { border-right:none; }
+.info-cell-label { font-size:11px; color:rgba(255,255,255,0.35); margin-bottom:5px; }
+.info-cell-value { font-size:13px; font-weight:500; color:rgba(255,255,255,0.82); font-family:'SF Mono',monospace; }
+.info-cell-value.available { color:#10b981; display:flex; align-items:center; gap:5px; }
+.info-cell-value.available svg { width:13px; height:13px; }
+
+/* Editable fields */
+.editable-field {
+  margin-bottom:16px;
+}
+.field-label-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.field-label { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:rgba(255,255,255,0.35); }
+.field-edit-btn { font-size:11px; color:#2563eb; cursor:pointer; }
+.field-edit-btn:hover { color:#60a5fa; }
+.field-input {
+  width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px; padding:9px 13px; color:rgba(255,255,255,0.85); font-size:14px;
+  font-weight:600; font-family:inherit; outline:none; transition:border-color 0.15s;
+}
+.field-input:focus { border-color:rgba(37,99,235,0.6); background:rgba(37,99,235,0.04); }
+.field-textarea {
+  resize:vertical; min-height:64px; font-size:13px; font-weight:400; line-height:1.5;
+}
+.field-textarea::placeholder { color:rgba(255,255,255,0.18); }
+
+/* Assigned network card */
+.assigned-card {
+  border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px 18px; margin-bottom:8px;
+  display:flex; align-items:flex-start; gap:12px;
+}
+.assigned-icon {
+  width:36px; height:36px; border-radius:9px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; background:rgba(99,102,241,0.15);
+}
+.assigned-icon svg { width:16px; height:16px; color:#818cf8; }
+.assigned-body { flex:1; }
+.assigned-name { font-size:14px; font-weight:600; color:#fff; margin-bottom:3px; display:flex; align-items:center; gap:8px; }
+.assigned-desc { font-size:12px; color:rgba(255,255,255,0.38); }
+.assigned-status { display:flex; align-items:center; gap:4px; font-size:11px; font-weight:500; color:#10b981; }
+.assigned-status-dot { width:5px; height:5px; border-radius:50%; background:#10b981; }
+.assigned-badge {
+  font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;
+  padding:2px 7px; border-radius:5px; background:rgba(99,102,241,0.18); color:#818cf8;
+}
+
+.assigned-metrics { display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:1px solid rgba(255,255,255,0.07); margin-top:14px; padding-top:14px; }
+.assigned-metric { }
+.assigned-metric:first-child, .assigned-metric:nth-child(2) { padding-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.07); }
+.assigned-metric:nth-child(2), .assigned-metric:nth-child(4) { padding-left:16px; border-left:1px solid rgba(255,255,255,0.07); }
+.assigned-metric:nth-child(3), .assigned-metric:nth-child(4) { padding-top:14px; }
+.am-label { font-size:11px; color:rgba(255,255,255,0.35); margin-bottom:4px; display:flex; align-items:center; gap:5px; }
+.am-label svg { width:11px; height:11px; }
+.am-value { font-size:16px; font-weight:700; color:#fff; }
+
+.view-link {
+  display:flex; align-items:center; justify-content:flex-end; gap:5px;
+  font-size:12px; font-weight:500; color:#2563eb; cursor:pointer; margin-top:10px;
+  transition:color 0.15s;
+}
+.view-link:hover { color:#60a5fa; }
+.view-link svg { width:12px; height:12px; }
+
+/* ── AGENT TAB ── */
+.agent-section { margin-bottom:28px; }
+
+.dropdown-select {
+  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px; padding:11px 14px; color:rgba(255,255,255,0.82); font-size:13px;
+  font-family:inherit; outline:none; cursor:pointer; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center;
+  padding-right:36px;
+}
+.dropdown-select:focus { border-color:rgba(37,99,235,0.5); }
+
+/* Network list selector */
+.network-selector { border:1px solid rgba(255,255,255,0.1); border-radius:10px; overflow:hidden; }
+
+.network-option {
+  display:flex; align-items:center; gap:12px; padding:13px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer;
+  transition:background 0.15s; text-decoration:none; color:inherit;
+}
+.network-option:last-child { border-bottom:none; }
+.network-option:hover { background:rgba(255,255,255,0.04); }
+.network-option.selected { background:rgba(37,99,235,0.08); }
+
+.no-icon {
+  width:32px; height:32px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.no-icon svg { width:14px; height:14px; }
+
+.no-body { flex:1; min-width:0; }
+.no-name { font-size:13px; font-weight:500; color:rgba(255,255,255,0.85); margin-bottom:2px; display:flex; align-items:center; gap:7px; }
+.no-desc { font-size:11px; color:rgba(255,255,255,0.36); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.no-status { display:flex; align-items:center; gap:4px; font-size:11px; font-weight:500; flex-shrink:0; }
+.no-radio {
+  width:16px; height:16px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.2);
+  flex-shrink:0; position:relative; transition:all 0.15s;
+}
+.network-option.selected .no-radio { border-color:#2563eb; background:#2563eb; }
+.no-radio::after {
+  content:''; position:absolute; inset:3px; border-radius:50%; background:#fff; opacity:0;
+}
+.network-option.selected .no-radio::after { opacity:1; }
+
+.create-network-link {
+  display:flex; align-items:center; gap:6px;
+  padding:11px 16px; color:#2563eb; font-size:13px; font-weight:500;
+  cursor:pointer; text-decoration:none; transition:all 0.15s;
+  border-top:1px solid rgba(255,255,255,0.08); margin-top:4px;
+  border-radius:0 0 10px 10px;
+}
+.create-network-link:hover { color:#60a5fa; background:rgba(37,99,235,0.06); }
+.create-network-link svg { width:13px; height:13px; }
+.cnl-ext { margin-left:auto; opacity:0.5; }
+
+/* Avatar section */
+.avatar-section { margin-bottom:28px; }
+.avatar-grid { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+.avatar-preset {
+  width:44px; height:44px; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  border:2px solid transparent; transition:all 0.15s; flex-shrink:0;
+}
+.avatar-preset:hover { transform:scale(1.08); }
+.avatar-preset.selected { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,0.25); }
+.avatar-preset svg { width:20px; height:20px; }
+
+.avatar-upload {
+  width:44px; height:44px; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  border:2px dashed rgba(255,255,255,0.2); background:rgba(255,255,255,0.04);
+  transition:all 0.15s; position:relative; overflow:hidden;
+}
+.avatar-upload:hover { border-color:rgba(37,99,235,0.6); background:rgba(37,99,235,0.07); }
+.avatar-upload svg { width:16px; height:16px; color:rgba(255,255,255,0.35); }
+.avatar-upload input[type="file"] {
+  position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+}
+.avatar-upload-label {
+  font-size:11px; color:rgba(255,255,255,0.35); margin-left:4px; cursor:pointer;
+}
+.avatar-upload-label:hover { color:rgba(255,255,255,0.6); }
+
+.avatar-custom-preview {
+  width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid #2563eb;
+  display:none; flex-shrink:0; cursor:pointer;
+}
+.avatar-custom-preview img { width:100%; height:100%; object-fit:cover; }
+
+/* Toggle */
+.toggle-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.toggle-row:last-child { border-bottom:none; }
+.toggle-label { font-size:13px; font-weight:500; color:rgba(255,255,255,0.8); margin-bottom:2px; }
+.toggle-desc { font-size:11px; color:rgba(255,255,255,0.36); }
+.toggle {
+  width:36px; height:20px; border-radius:100px; background:rgba(255,255,255,0.12);
+  position:relative; cursor:pointer; flex-shrink:0; transition:background 0.2s;
+}
+.toggle.on { background:#2563eb; }
+.toggle::after {
+  content:''; position:absolute; left:3px; top:3px; width:14px; height:14px;
+  border-radius:50%; background:rgba(255,255,255,0.4); transition:transform 0.2s, background 0.2s;
+}
+.toggle.on::after { transform:translateX(16px); background:#fff; }
+
+/* ── RIGHT PANEL (Widget Simulator) ── */
+.right-panel {
+  width:380px; flex-shrink:0; border-left:1px solid rgba(255,255,255,0.07);
+  background:#111; display:flex; flex-direction:column; overflow:hidden;
+}
+.rp-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0;
+}
+.rp-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.28); }
+.rp-ext { font-size:11px; color:rgba(255,255,255,0.28); cursor:pointer; }
+.rp-ext:hover { color:rgba(255,255,255,0.6); }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(.7);} }
+
+/* Simulated website */
+.widget-simulator {
+  flex:1; position:relative; overflow:hidden; background:#f1f3f6;
+}
+.sim-topbar {
+  height:40px; background:#fff; border-bottom:1px solid #e5e7eb;
+  display:flex; align-items:center; padding:0 14px; gap:10px; flex-shrink:0;
+}
+.sim-logo { width:18px; height:18px; border-radius:4px; background:#2563eb; flex-shrink:0; }
+.sim-nav { display:flex; gap:8px; flex:1; }
+.sim-nav-item { height:7px; border-radius:3px; background:#e2e5ea; }
+.sim-cta { width:60px; height:24px; border-radius:6px; background:#2563eb; opacity:0.85; flex-shrink:0; }
+.sim-content { padding:16px 14px; display:flex; flex-direction:column; gap:10px; }
+.sim-hero { background:#fff; border-radius:10px; border:1px solid #e5e7eb; padding:14px; }
+.sim-bar { height:9px; border-radius:4px; background:#e2e5ea; margin-bottom:7px; }
+.sim-bar.wide { width:70%; }
+.sim-bar.med { width:50%; }
+.sim-bar.short { width:35%; margin-bottom:0; }
+.sim-cards { display:flex; gap:8px; }
+.sim-card { flex:1; height:56px; background:#fff; border-radius:8px; border:1px solid #e5e7eb; }
+
+/* Floating widget window */
+.widget-window {
+  position:absolute; bottom:74px; right:14px; width:316px; height:400px;
+  background:#0d0d0d; border-radius:16px; overflow:hidden;
+  display:flex; flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.25);
+  transform:scale(0.94) translateY(12px); opacity:0;
+  transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1), opacity 0.18s ease;
+  pointer-events:none;
+}
+.widget-window.open { transform:scale(1) translateY(0); opacity:1; pointer-events:all; }
+
+/* Widget header */
+.ww-header {
+  display:flex; align-items:center; gap:9px; padding:11px 14px;
+  background:#111; border-bottom:1px solid rgba(255,255,255,0.08); flex-shrink:0;
+}
+.ww-close {
+  margin-left:auto; width:22px; height:22px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,0.38); cursor:pointer; transition:all 0.15s; flex-shrink:0;
+}
+.ww-close:hover { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7); }
+.ww-close svg { width:13px; height:13px; }
+
+/* Chat area */
+.wp-chat {
+  flex:1; overflow-y:auto; padding:12px 12px;
+  display:flex; flex-direction:column; gap:9px;
+  background:#0d0d0d;
+}
+.wp-chat::-webkit-scrollbar { width:3px; }
+.wp-chat::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+.wp-bubble-agent { display:flex; align-items:flex-start; gap:7px; }
+.wp-avatar { width:24px; height:24px; border-radius:50%; background:#2563eb; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; }
+.wp-msg {
+  background:rgba(255,255,255,0.08); border-radius:10px 10px 10px 2px;
+  padding:8px 11px; font-size:12px; color:rgba(255,255,255,0.82); max-width:200px; line-height:1.5;
+}
+.wp-msg-user {
+  align-self:flex-end;
+  background:#2563eb; border-radius:10px 10px 2px 10px;
+  padding:8px 11px; font-size:12px; color:#fff; max-width:200px; line-height:1.5;
+}
+
+/* Input bar */
+.wp-input-row {
+  display:flex; align-items:center; gap:6px;
+  padding:9px 10px; border-top:1px solid rgba(255,255,255,0.07); flex-shrink:0;
+  background:#111;
+}
+.wp-input {
+  flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px; padding:8px 11px; font-size:12px; color:rgba(255,255,255,0.8);
+  outline:none; font-family:inherit;
+}
+.wp-input::placeholder { color:rgba(255,255,255,0.28); }
+.wp-send {
+  width:30px; height:30px; border-radius:50%; background:#2563eb; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background 0.15s;
+}
+.wp-send:hover { background:#1d4ed8; }
+.wp-send svg { width:12px; height:12px; }
+
+/* Launcher button */
+.widget-launcher {
+  position:absolute; bottom:14px; right:14px;
+  width:50px; height:50px; border-radius:50%; background:#2563eb;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:transform 0.2s, box-shadow 0.2s;
+  box-shadow:0 4px 18px rgba(37,99,235,0.5);
+}
+.widget-launcher:hover { transform:scale(1.08); box-shadow:0 6px 22px rgba(37,99,235,0.6); }
+.widget-launcher svg { width:22px; height:22px; }
+.widget-launcher .icon-close { display:none; }
+.widget-launcher.open .icon-chat { display:none; }
+.widget-launcher.open .icon-close { display:block; }
+
+/* ── SECOND VIEW (Create Network) ── */
+.view { display:none; }
+.view.active { display:flex; }
+
+#view-main { flex-direction:row; flex:1; overflow:hidden; }
+#view-create { flex-direction:column; flex:1; overflow:hidden; background:#0d0d0d; }
+
+.create-page { flex:1; display:flex; align-items:center; justify-content:center; }
+.create-card {
+  background:#111; border:1px solid rgba(255,255,255,0.1); border-radius:16px;
+  padding:40px; width:480px; text-align:center;
+}
+.create-card-icon {
+  width:56px; height:56px; border-radius:14px; background:rgba(99,102,241,0.12);
+  border:1px solid rgba(99,102,241,0.25); display:flex; align-items:center; justify-content:center;
+  margin:0 auto 20px;
+}
+.create-card-icon svg { width:26px; height:26px; color:#818cf8; }
+.create-card h2 { font-size:20px; font-weight:700; margin-bottom:8px; }
+.create-card p { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.5; margin-bottom:28px; }
+.back-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  color:rgba(255,255,255,0.45); font-size:12px; cursor:pointer; margin-bottom:32px;
+  transition:color 0.15s;
+}
+.back-btn:hover { color:rgba(255,255,255,0.75); }
+.back-btn svg { width:13px; height:13px; }
+
+/* ── TYPE SELECTOR ── */
+.type-selector { display:flex; gap:8px; margin-bottom:16px; }
+.type-card { flex:1; padding:12px 8px; border:1px solid rgba(255,255,255,0.1); border-radius:10px; cursor:pointer; transition:all 0.15s; text-align:center; }
+.type-card:hover { border-color:rgba(255,255,255,0.22); background:rgba(255,255,255,0.03); }
+.type-card.selected { border-color:#2563eb; background:rgba(37,99,235,0.07); }
+.type-card-icon { width:30px; height:30px; border-radius:8px; margin:0 auto 7px; display:flex; align-items:center; justify-content:center; }
+.type-card-icon svg { width:14px; height:14px; }
+.type-card-label { font-size:12px; font-weight:600; color:rgba(255,255,255,0.65); margin-bottom:2px; }
+.type-card-desc { font-size:10px; color:rgba(255,255,255,0.3); line-height:1.3; }
+.type-card.selected .type-card-label { color:#fff; }
+
+/* ── NETWORK SUMMARY ── */
+.network-summary { border:1px solid rgba(37,99,235,0.3); border-radius:10px; background:rgba(37,99,235,0.04); padding:14px 16px; margin-top:10px; margin-bottom:12px; }
+.ns-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; }
+.ns-icon { width:32px; height:32px; border-radius:8px; background:rgba(99,102,241,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ns-icon svg { width:14px; height:14px; color:#818cf8; }
+.ns-name { font-size:13px; font-weight:600; color:#fff; display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+.ns-badge { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; padding:2px 6px; border-radius:4px; background:rgba(99,102,241,0.18); color:#818cf8; }
+.ns-desc { font-size:11px; color:rgba(255,255,255,0.42); margin-top:3px; line-height:1.4; }
+.ns-pills { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+.ns-pill { font-size:10px; padding:2px 8px; border-radius:10px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.09); color:rgba(255,255,255,0.5); }
+.ns-link { font-size:12px; font-weight:500; color:#2563eb; cursor:pointer; display:flex; align-items:center; gap:4px; }
+.ns-link:hover { color:#60a5fa; }
+.ns-link svg { width:11px; height:11px; }
+
+/* ── DOMAIN CHIPS ── */
+.domain-chips { display:flex; flex-wrap:wrap; gap:7px; padding:12px 16px; }
+.domain-chip { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:100px; font-size:12px; color:rgba(255,255,255,0.7); }
+.domain-chip-x { cursor:pointer; color:rgba(255,255,255,0.25); font-size:15px; line-height:1; margin-left:1px; }
+.domain-chip-x:hover { color:rgba(255,255,255,0.6); }
+.domain-add-row { display:flex; align-items:center; gap:8px; padding:0 16px 14px; }
+
+/* ── NETWORK SUMMARY SECTIONS ── */
+.ns-section-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:rgba(255,255,255,0.28); margin-bottom:6px; margin-top:12px; }
+.ns-cap-item { display:flex; align-items:flex-start; gap:7px; margin-bottom:5px; }
+.ns-tool-pill { font-size:10px; padding:3px 9px; border-radius:10px; background:rgba(37,99,235,0.1); border:1px solid rgba(37,99,235,0.2); color:#93c5fd; }
+
+/* ── ATTACHMENT BUTTON ── */
+.wp-attach { width:32px; height:32px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.35); cursor:pointer; transition:all 0.15s; }
+.wp-attach:hover { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.65); }
+.wp-attach svg { width:14px; height:14px; }
+.wp-file-badge { display:flex; align-items:center; gap:7px; margin:0 16px 8px; padding:6px 10px; background:rgba(37,99,235,0.1); border:1px solid rgba(37,99,235,0.2); border-radius:7px; font-size:11px; color:rgba(255,255,255,0.65); }
+.wp-file-badge svg { width:12px; height:12px; color:#60a5fa; flex-shrink:0; }
+.wp-file-remove { margin-left:auto; cursor:pointer; color:rgba(255,255,255,0.3); font-size:14px; line-height:1; }
+.wp-file-remove:hover { color:rgba(255,255,255,0.6); }
+
+/* ── NETWORK DROPDOWN SELECTOR ── */
+.network-dropdown-wrap { margin-bottom:16px; }
+.network-dropdown-select {
+  width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
+  border-radius:9px; padding:10px 14px; color:rgba(255,255,255,0.85); font-size:13px;
+  font-family:inherit; outline:none; cursor:pointer; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center; background-size:14px;
+  padding-right:36px; transition:border-color 0.15s;
+}
+.network-dropdown-select:focus { border-color:rgba(37,99,235,0.5); box-shadow:0 0 0 3px rgba(37,99,235,0.1); }
+.network-dropdown-select option { background:#1a1a1a; color:rgba(255,255,255,0.85); }
+</style>
+</head>
+<body>
+
+<!-- ── LEFT NAV ── -->
+<nav class="leftnav">
+  <div class="leftnav-logo">AO</div>
+  <div class="nav-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+  </div>
+  <div class="nav-icon active">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </div>
+  <div class="nav-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
+  </div>
+  <div class="nav-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  </div>
+  <div class="nav-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </div>
+  <div class="nav-spacer"></div>
+  <div class="nav-bottom">
+    <div class="nav-settings">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MAIN VIEW ── -->
+<div id="view-main" class="view active">
+
+  <!-- Main column -->
+  <div class="main">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="brand">
+          <div class="brand-logo">AO</div>
+          AIMS-OS
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="breadcrumb">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="bc-item">AIMS-OS Platform</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="bc-item">Chat Widget</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="bc-current">Main Website</span>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div class="search-box">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Search in AIMS-OS Platform…</span>
+          <div class="search-kbd">⌘K</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="create-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Create
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="icon-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <div class="icon-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="icon-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </div>
+        <div class="avatar-btn">TH</div>
+      </div>
+    </div>
+
+    <!-- Page -->
+    <div class="page">
+      <!-- Page header -->
+      <div class="page-header">
+        <div>
+          <div class="page-title-row">
+            <div class="page-title">Main Website</div>
+            <div class="badge-active"><span class="badge-active-dot"></span>Active</div>
+          </div>
+          <div class="page-sub">acme.com · Widget ID: wgt_Xk9mN2pL3qR7</div>
+        </div>
+        <div class="page-actions">
+          <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.32);padding:0 4px">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="20 6 9 17 4 12"/></svg>
+            Autosaved
+          </span>
+          <button class="btn btn-ghost">Discard</button>
+          <button class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2"/></svg>
+            Publish
+          </button>
+          <button class="btn btn-dots">···</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active" data-tab="overview">Overview</div>
+        <div class="tab" data-tab="appearance">Appearance</div>
+        <div class="tab" data-tab="agent">Agentic Network</div>
+        <div class="tab" data-tab="preferences">Preferences</div>
+        <div class="tab" data-tab="embed">Embed</div>
+      </div>
+
+      <!-- Tab content -->
+      <div class="tab-content">
+
+        <!-- ── OVERVIEW ── -->
+        <div id="tab-overview" class="tab-panel active">
+
+          <!-- Editable name & description -->
+          <div class="editable-field">
+            <div class="field-label-row">
+              <div class="field-label">Widget Name</div>
+            </div>
+            <input class="field-input" value="Main Website" />
+          </div>
+          <div class="editable-field" style="margin-bottom:24px">
+            <div class="field-label-row">
+              <div class="field-label">Description</div>
+            </div>
+            <textarea class="field-input field-textarea" placeholder="Describe what this widget does, who uses it, and when it's triggered…">Customer-facing support and lead qualification widget embedded on acme.com. Handles inbound questions, qualifies leads, and routes to the right SDR or support queue.</textarea>
+          </div>
+
+          <!-- Metrics -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon" style="background:rgba(37,99,235,0.12)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div class="metric-value">94.2%</div>
+              <div class="metric-label">Success Rate</div>
+              <div class="metric-change mc-up">+2.1%</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" style="background:rgba(16,185,129,0.1)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div class="metric-value">78.5%</div>
+              <div class="metric-label">Autonomous Resolution</div>
+              <div class="metric-change mc-up">+5.3%</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" style="background:rgba(245,158,11,0.1)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div class="metric-value">$0.08</div>
+              <div class="metric-label">Cost per Execution</div>
+              <div class="metric-change mc-neutral">No change</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" style="background:rgba(99,102,241,0.1)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="metric-value">1,240</div>
+              <div class="metric-label">Executions</div>
+              <div class="metric-change mc-up">+142 this month</div>
+            </div>
+          </div>
+
+          <!-- Widget Info -->
+          <div class="section-label">Widget Info</div>
+          <div class="info-grid">
+            <div class="info-row">
+              <div class="info-cell">
+                <div class="info-cell-label">Widget ID</div>
+                <div class="info-cell-value">wgt_Xk9mN2pL3qR7</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-cell-label">Version</div>
+                <div class="info-cell-value">v2.4.1</div>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-cell">
+                <div class="info-cell-label">Trusted Domains</div>
+                <div class="info-cell-value">3 configured</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-cell-label">Created</div>
+                <div class="info-cell-value">Mar 14, 2025</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Assigned Agentic Network -->
+          <div class="section-label">Assigned Agentic Network</div>
+          <div class="assigned-card">
+            <div class="assigned-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
+            </div>
+            <div class="assigned-body">
+              <div class="assigned-name">
+                Sales AI
+                <span class="assigned-badge">Agentic Network</span>
+              </div>
+              <div class="assigned-desc">Lead qualification &amp; vehicle recommendations</div>
+              <div class="assigned-metrics">
+                <div class="assigned-metric">
+                  <div class="am-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    Success Rate
+                  </div>
+                  <div class="am-value">94.2%</div>
+                </div>
+                <div class="assigned-metric">
+                  <div class="am-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Avg. Response
+                  </div>
+                  <div class="am-value">&lt;1s</div>
+                </div>
+                <div class="assigned-metric">
+                  <div class="am-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Autonomous
+                  </div>
+                  <div class="am-value">78.5%</div>
+                </div>
+                <div class="assigned-metric">
+                  <div class="am-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    Cost / Run
+                  </div>
+                  <div class="am-value">$0.08</div>
+                </div>
+              </div>
+              <div class="view-link" onclick="goTo('agent')">
+                View in Agentic Studio
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+            </div>
+            <div class="assigned-status"><span class="assigned-status-dot"></span>Active</div>
+          </div>
+        </div>
+
+        <!-- ── APPEARANCE ── -->
+        <div id="tab-appearance" class="tab-panel">
+
+          <div class="section-label">Brand Color</div>
+          <div class="info-grid" style="margin-bottom:20px">
+            <div class="info-row">
+              <div class="info-cell">
+                <div class="info-cell-label">Primary Color
+                  <span style="font-size:9px;color:rgba(255,255,255,0.25);margin-left:4px">Afecta botones, avatares, estados activos y acentos del widget</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+                  <div id="ap-sw1" style="width:40px;height:40px;border-radius:9px;background:#2563eb;border:1px solid rgba(255,255,255,0.15);cursor:pointer;position:relative;overflow:hidden;flex-shrink:0">
+                    <input type="color" value="#2563eb" oninput="syncPrimaryColor(this.value)" style="position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer" />
+                  </div>
+                  <input id="ap-hex1" style="width:100px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 12px;color:rgba(255,255,255,0.85);font-size:13px;font-family:'SF Mono',monospace;outline:none" value="#2563eb" oninput="syncPrimaryColor(this.value)" />
+                  <div style="display:flex;gap:6px;margin-left:4px">
+                    <div style="width:26px;height:26px;border-radius:7px;background:#2563eb;cursor:pointer;border:2px solid rgba(255,255,255,0.4);flex-shrink:0" title="Blue" onclick="syncPrimaryColor('#2563eb')"></div>
+                    <div style="width:26px;height:26px;border-radius:7px;background:#7c3aed;cursor:pointer;border:2px solid transparent;flex-shrink:0" title="Purple" onclick="syncPrimaryColor('#7c3aed')"></div>
+                    <div style="width:26px;height:26px;border-radius:7px;background:#059669;cursor:pointer;border:2px solid transparent;flex-shrink:0" title="Green" onclick="syncPrimaryColor('#059669')"></div>
+                    <div style="width:26px;height:26px;border-radius:7px;background:#ef4444;cursor:pointer;border:2px solid transparent;flex-shrink:0" title="Red" onclick="syncPrimaryColor('#ef4444')"></div>
+                    <div style="width:26px;height:26px;border-radius:7px;background:#f59e0b;cursor:pointer;border:2px solid transparent;flex-shrink:0" title="Amber" onclick="syncPrimaryColor('#f59e0b')"></div>
+                    <div style="width:26px;height:26px;border-radius:7px;background:#06b6d4;cursor:pointer;border:2px solid transparent;flex-shrink:0" title="Cyan" onclick="syncPrimaryColor('#06b6d4')"></div>
+                  </div>
+                </div>
+                <div style="margin-top:9px;font-size:11px;color:rgba(255,255,255,0.25)">El cambio se refleja en tiempo real en el Live Preview →</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">Layout</div>
+          <div class="info-grid" style="margin-bottom:20px">
+            <div class="info-row">
+              <div class="info-cell" style="border-right:1px solid rgba(255,255,255,0.06)">
+                <div class="info-cell-label">Theme</div>
+                <select class="dropdown-select" style="margin-top:8px">
+                  <option>System (auto)</option><option>Dark</option><option>Light</option>
+                </select>
+              </div>
+              <div class="info-cell">
+                <div class="info-cell-label">Widget Size</div>
+                <select class="dropdown-select" style="margin-top:8px">
+                  <option>Medium (default)</option><option>Small</option><option>Large</option><option>Full screen</option>
+                </select>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-cell" style="border-right:1px solid rgba(255,255,255,0.06)">
+                <div class="info-cell-label">Position</div>
+                <select class="dropdown-select" style="margin-top:8px">
+                  <option>Bottom right</option><option>Bottom left</option><option>Inline (custom)</option>
+                </select>
+              </div>
+              <div class="info-cell">
+                <div class="info-cell-label">Border Radius</div>
+                <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+                  <span style="font-size:11px;color:rgba(255,255,255,0.28)">0</span>
+                  <input type="range" min="0" max="24" value="12" oninput="document.getElementById('br-val').textContent=this.value+'px'" style="flex:1" />
+                  <span style="font-size:11px;color:rgba(255,255,255,0.28)">24</span>
+                  <span id="br-val" style="min-width:34px;text-align:right;font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);font-family:monospace">12px</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">Options</div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Show AIMS-OS Branding</div>
+              <div class="toggle-desc">Display "Powered by AIMS-OS" in the widget footer</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Show Agent Avatar</div>
+              <div class="toggle-desc">Display the network avatar next to messages</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Show Typing Indicator</div>
+              <div class="toggle-desc">Animate a "..." indicator while the network is processing</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Custom CSS</div>
+              <div class="toggle-desc">Inject custom styles into the widget iframe</div>
+            </div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <!-- ── AGENTIC NETWORK TAB ── -->
+        <div id="tab-agent" class="tab-panel">
+
+          <!-- Assignment -->
+          <div class="agent-section">
+            <div class="section-label">Agentic Network Assignment</div>
+
+            <!-- Step 1: Type -->
+            <div style="margin-bottom:18px">
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.28);margin-bottom:8px">Step 1 · Type</div>
+              <div class="type-selector">
+                <div class="type-card" onclick="selectType(this)">
+                  <div class="type-card-icon" style="background:rgba(16,185,129,0.12)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  </div>
+                  <div class="type-card-label">Agentic Workflow</div>
+                  <div class="type-card-desc">Single linear flow</div>
+                </div>
+                <div class="type-card selected" onclick="selectType(this)">
+                  <div class="type-card-icon" style="background:rgba(99,102,241,0.12)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
+                  </div>
+                  <div class="type-card-label">Agentic Network</div>
+                  <div class="type-card-desc">Multi-step graph</div>
+                </div>
+                <div class="type-card" onclick="selectType(this)">
+                  <div class="type-card-icon" style="background:rgba(245,158,11,0.1)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <div class="type-card-label">Squad</div>
+                  <div class="type-card-desc">Parallel agents</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Select -->
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.28);margin-bottom:8px">Step 2 · Select</div>
+
+            <div class="network-dropdown-wrap">
+              <select class="network-dropdown-select" id="network-dropdown" onchange="onNetworkDropdownChange(this)">
+                <!-- Options populated by JS based on selected type -->
+              </select>
+            </div>
+
+            <a class="create-network-link" onclick="showCreateView()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Create new Agentic Network
+              <svg class="cnl-ext" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+
+            <!-- Network summary (appears when a network is selected) -->
+            <div id="network-summary" class="network-summary">
+              <!-- Header -->
+              <div class="ns-row">
+                <div class="ns-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
+                </div>
+                <div style="flex:1">
+                  <div class="ns-name"><span id="ns-name">Sales AI</span> <span class="ns-badge" id="ns-type-badge">Agentic Network</span></div>
+                  <div class="ns-desc" id="ns-desc">Lead qualification &amp; vehicle recommendations.</div>
+                </div>
+              </div>
+
+              <!-- Meta: nodes + autonomous -->
+              <div id="ns-meta" style="display:flex;gap:10px;align-items:center;margin-bottom:4px">
+                <span style="font-size:11px;color:rgba(255,255,255,0.38)">3 nodes</span>
+                <span style="font-size:11px;color:rgba(255,255,255,0.2)">·</span>
+                <span style="font-size:11px;color:#10b981">Autonomous 78.5%</span>
+              </div>
+
+              <!-- Tools & Integrations -->
+              <div class="ns-section-label">Tools &amp; Integrations</div>
+              <div class="ns-pills" id="ns-tools">
+                <span class="ns-tool-pill">Salesforce CRM</span>
+                <span class="ns-tool-pill">Lead Scoring API</span>
+                <span class="ns-tool-pill">Slack</span>
+                <span class="ns-tool-pill">HubSpot Write</span>
+              </div>
+
+              <!-- Capabilities -->
+              <div class="ns-section-label">Capabilities</div>
+              <div id="ns-caps">
+                <div class="ns-cap-item"><span style="width:4px;height:4px;border-radius:50%;background:#818cf8;flex-shrink:0;margin-top:5px;display:inline-block"></span><span style="font-size:11px;color:rgba(255,255,255,0.6)">Lead qualification &amp; ICP scoring</span></div>
+                <div class="ns-cap-item"><span style="width:4px;height:4px;border-radius:50%;background:#818cf8;flex-shrink:0;margin-top:5px;display:inline-block"></span><span style="font-size:11px;color:rgba(255,255,255,0.6)">Multi-conversation handling</span></div>
+                <div class="ns-cap-item"><span style="width:4px;height:4px;border-radius:50%;background:#818cf8;flex-shrink:0;margin-top:5px;display:inline-block"></span><span style="font-size:11px;color:rgba(255,255,255,0.6)">SDR routing &amp; assignment</span></div>
+                <div class="ns-cap-item"><span style="width:4px;height:4px;border-radius:50%;background:#818cf8;flex-shrink:0;margin-top:5px;display:inline-block"></span><span style="font-size:11px;color:rgba(255,255,255,0.6)">Human Gate escalation</span></div>
+              </div>
+
+              <a class="ns-link" style="margin-top:12px" onclick="showCreateView()">
+                View in Agentic Studio
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Avatar -->
+          <div class="avatar-section">
+            <div class="section-label">Agentic Network Avatar</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.36);margin-bottom:12px">Pick a preset or upload your own image</div>
+            <div class="avatar-grid">
+              <!-- Custom upload -->
+              <div class="avatar-upload" id="avatar-upload-btn" title="Upload custom avatar">
+                <input type="file" accept="image/*" onchange="previewAvatar(event)" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div id="avatar-custom" class="avatar-custom-preview">
+                <img id="avatar-img" src="" alt="Custom" />
+              </div>
+
+              <!-- Presets -->
+              <div class="avatar-preset selected" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <div class="avatar-preset" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+              </div>
+              <div class="avatar-preset" style="background:linear-gradient(135deg,#10b981,#34d399)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div class="avatar-preset" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
+              </div>
+              <div class="avatar-preset" style="background:linear-gradient(135deg,#ec4899,#a855f7)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+            </div>
+            <div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.28)">Supported formats: PNG, JPG, SVG · Max 2MB · Recommended 256×256px</div>
+          </div>
+
+        </div>
+
+        <!-- ── PREFERENCES ── -->
+        <div id="tab-preferences" class="tab-panel">
+
+          <div class="section-label">Language &amp; Region</div>
+          <div class="info-grid" style="margin-bottom:20px">
+            <div class="info-row">
+              <div class="info-cell" style="border-right:1px solid rgba(255,255,255,0.06)">
+                <div class="info-cell-label">Default Language</div>
+                <select class="dropdown-select" style="margin-top:8px">
+                  <option>English (US)</option><option>Spanish</option><option>Portuguese</option><option>French</option><option>German</option>
+                </select>
+              </div>
+              <div class="info-cell">
+                <div class="info-cell-label">Auto-detect Language</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+                  <span style="font-size:12px;color:rgba(255,255,255,0.5)">Detect visitor's browser language</span>
+                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-cell" style="border-right:1px solid rgba(255,255,255,0.06)">
+                <div class="info-cell-label">Timezone</div>
+                <select class="dropdown-select" style="margin-top:8px">
+                  <option>America/Bogota (UTC-5)</option><option>America/New_York (UTC-5)</option><option>Europe/London (UTC+0)</option>
+                </select>
+              </div>
+              <div class="info-cell">
+                <div class="info-cell-label">Date Format</div>
+                <select class="dropdown-select" style="margin-top:8px">
+                  <option>MM/DD/YYYY</option><option>DD/MM/YYYY</option><option>YYYY-MM-DD</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">Availability</div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Business Hours Only</div>
+              <div class="toggle-desc">Show widget only during configured business hours</div>
+            </div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Show "Away" Message</div>
+              <div class="toggle-desc">Display a custom message when outside business hours</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div style="margin:4px 0 20px">
+            <div class="info-cell-label" style="margin-bottom:6px">Away Message</div>
+            <textarea style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 13px;color:rgba(255,255,255,0.75);font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:64px;line-height:1.5">We're currently offline. Leave a message and we'll get back to you during business hours.</textarea>
+          </div>
+
+          <div class="section-label">Routing Preferences</div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Collect Visitor Email</div>
+              <div class="toggle-desc">Ask for email before starting a conversation</div>
+            </div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Conversation History</div>
+              <div class="toggle-desc">Show previous conversations to returning visitors</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Human Escalation Allowed</div>
+              <div class="toggle-desc">Allow the network to escalate to a human agent via Human Gate</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Block Repeat Triggers</div>
+              <div class="toggle-desc">Prevent the same visitor from triggering the network more than once per session</div>
+            </div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+
+          <div class="section-label">Error Handling</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.36);margin-bottom:10px">Shown to visitors when the widget is unavailable or encounters an error</div>
+          <textarea class="field-input field-textarea" style="min-height:72px;margin-bottom:14px;font-size:13px;font-weight:400">Something went wrong. Please try again or contact us at support@acme.com</textarea>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Show retry button</div>
+              <div class="toggle-desc">Add a "Try again" button below the error message</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <!-- ── EMBED ── -->
+        <div id="tab-embed" class="tab-panel">
+
+          <div class="section-label">API Key</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
+            <div style="flex:1;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:9px 13px;font-family:'SF Mono',monospace;font-size:12px;color:rgba(255,255,255,0.38);letter-spacing:0.04em">
+              wgt_live_••••••••••••••••••••••••••••••••
+            </div>
+            <button class="btn btn-ghost" style="white-space:nowrap">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Reveal
+            </button>
+            <button class="btn btn-ghost">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+
+          <div class="section-label">Trusted Domains</div>
+          <div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:20px">
+            <div class="domain-chips" id="domain-chips">
+              <span class="domain-chip">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" style="width:11px;height:11px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                acme.com<span class="domain-chip-x" onclick="this.parentElement.remove()">×</span>
+              </span>
+              <span class="domain-chip">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" style="width:11px;height:11px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                app.acme.com<span class="domain-chip-x" onclick="this.parentElement.remove()">×</span>
+              </span>
+              <span class="domain-chip">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" style="width:11px;height:11px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                staging.acme.com<span class="domain-chip-x" onclick="this.parentElement.remove()">×</span>
+              </span>
+            </div>
+            <div class="domain-add-row">
+              <input id="domain-input" placeholder="Add domain (e.g. example.com)" onkeydown="if(event.key==='Enter')addDomain()" style="flex:1;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.1);border-radius:7px;padding:7px 12px;font-size:12px;color:rgba(255,255,255,0.6);outline:none;font-family:inherit" />
+              <button onclick="addDomain()" style="padding:7px 14px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);border-radius:7px;color:#60a5fa;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap">Add</button>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div class="section-label" style="margin-bottom:0">Embed Code</div>
+            <select style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:5px 26px 5px 10px;color:rgba(255,255,255,0.75);font-size:12px;font-family:inherit;outline:none;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.3)%22 stroke-width=%222%22%3E%3Cpolyline points=%226 9 12 15 18 9%22%3E%3C/polyline%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 8px center">
+              <option>HTML</option><option>React</option><option>Vue</option>
+            </select>
+          </div>
+          <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.65;position:relative;margin-bottom:20px">
+            <button onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)" style="position:absolute;top:10px;right:10px;padding:4px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:rgba(255,255,255,0.45);font-size:11px;cursor:pointer;font-family:inherit">Copy</button>
+<span style="color:#818cf8">&lt;script</span> <span style="color:#7dd3fc">src</span>=<span style="color:#86efac">"https://widget.aimsos.ai/v1/embed.js"</span><span style="color:#818cf8">&gt;&lt;/script&gt;</span>
+
+<span style="color:#818cf8">&lt;aims-widget</span>
+  <span style="color:#7dd3fc">widget-id</span>=<span style="color:#86efac">"wgt_Xk9mN2pL3qR7"</span>
+  <span style="color:#7dd3fc">api-key</span>=<span style="color:#86efac">"wgt_live_••••••••••••"</span>
+  <span style="color:#7dd3fc">theme</span>=<span style="color:#86efac">"system"</span>
+  <span style="color:#7dd3fc">position</span>=<span style="color:#86efac">"bottom-right"</span>
+  <span style="color:#7dd3fc">lang</span>=<span style="color:#86efac">"en"</span>
+<span style="color:#818cf8">&gt;&lt;/aims-widget&gt;</span>
+          </div>
+
+          <div class="section-label">Environment</div>
+          <div class="info-grid">
+            <div class="info-row">
+              <div class="info-cell" style="border-right:1px solid rgba(255,255,255,0.06)">
+                <div class="info-cell-label">Active Environment</div>
+                <select class="dropdown-select" style="margin-top:8px">
+                  <option>Production</option><option>Staging</option>
+                </select>
+              </div>
+              <div class="info-cell">
+                <div class="info-cell-label">Version</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+                  <span style="font-size:13px;font-weight:600;color:#fff">v2.4.1</span>
+                  <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.2)">Latest</span>
+                </div>
+                <button onclick="document.getElementById('version-history').style.display=document.getElementById('version-history').style.display==='none'?'block':'none'" style="display:inline-flex;align-items:center;gap:4px;margin-top:9px;background:none;border:none;color:#2563eb;font-size:11px;cursor:pointer;padding:0;font-family:inherit">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  View history
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Version history panel -->
+          <div id="version-history" style="display:none;border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:20px;overflow:hidden">
+            <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.07);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.28)">Version History</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06)">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#fff">v2.4.1</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px">Apr 15, 2026 · Current</div>
+              </div>
+              <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.2)">Active</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06)">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.7)">v2.3.0</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px">Mar 28, 2026</div>
+              </div>
+              <button onclick="this.textContent='Restoring…';setTimeout(()=>this.textContent='Restore',2000)" style="font-size:11px;padding:5px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:rgba(255,255,255,0.6);cursor:pointer;font-family:inherit">Restore</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06)">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.7)">v2.2.1</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px">Mar 10, 2026</div>
+              </div>
+              <button onclick="this.textContent='Restoring…';setTimeout(()=>this.textContent='Restore',2000)" style="font-size:11px;padding:5px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:rgba(255,255,255,0.6);cursor:pointer;font-family:inherit">Restore</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.7)">v2.1.0</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px">Feb 22, 2026</div>
+              </div>
+              <button onclick="this.textContent='Restoring…';setTimeout(()=>this.textContent='Restore',2000)" style="font-size:11px;padding:5px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:7px;color:rgba(255,255,255,0.6);cursor:pointer;font-family:inherit">Restore</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-content -->
+    </div><!-- /page -->
+  </div><!-- /main -->
+
+  <!-- ── RIGHT PANEL (Widget Simulator) ── -->
+  <div class="right-panel">
+
+    <!-- Header -->
+    <div class="rp-header">
+      <span class="rp-title">Widget Preview</span>
+      <span class="rp-ext" title="Open in new tab">↗</span>
+    </div>
+
+    <!-- Simulated website -->
+    <div class="widget-simulator">
+
+      <!-- Fake page nav -->
+      <div class="sim-topbar">
+        <div class="sim-logo"></div>
+        <div class="sim-nav">
+          <div class="sim-nav-item" style="width:44px"></div>
+          <div class="sim-nav-item" style="width:54px"></div>
+          <div class="sim-nav-item" style="width:38px"></div>
+          <div class="sim-nav-item" style="width:60px"></div>
+        </div>
+        <div class="sim-cta" id="sim-cta-btn"></div>
+      </div>
+
+      <!-- Fake page content -->
+      <div class="sim-content">
+        <div class="sim-hero">
+          <div class="sim-bar wide"></div>
+          <div class="sim-bar med"></div>
+          <div class="sim-bar short"></div>
+        </div>
+        <div class="sim-cards">
+          <div class="sim-card"></div>
+          <div class="sim-card"></div>
+          <div class="sim-card"></div>
+        </div>
+        <div class="sim-hero" style="padding:12px">
+          <div class="sim-bar" style="width:55%;margin-bottom:6px"></div>
+          <div class="sim-bar short"></div>
+        </div>
+      </div>
+
+      <!-- Floating chat window -->
+      <div class="widget-window open" id="widget-window">
+
+        <!-- Widget header -->
+        <div class="ww-header">
+          <div class="wp-avatar" id="preview-avatar" style="width:28px;height:28px;font-size:10px">ST</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:600;color:#fff;line-height:1.2">Support Team</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.38);margin-top:1px">Sales AI · Agentic Network</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:3px;font-size:10px;color:#10b981;flex-shrink:0;margin-right:6px">
+            <span style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block;animation:pulse 1.5s ease-in-out infinite"></span>
+            Online
+          </div>
+          <div class="ww-close" onclick="toggleWidget()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+        </div>
+
+        <!-- Chat messages -->
+        <div class="wp-chat" id="wp-chat-messages">
+          <div class="wp-bubble-agent">
+            <div class="wp-avatar">ST</div>
+            <div class="wp-msg">Hey there! How can I assist you today?</div>
+          </div>
+          <div class="wp-msg-user">Hi! I saw you on our pricing page.</div>
+          <div class="wp-bubble-agent">
+            <div class="wp-avatar">ST</div>
+            <div class="wp-msg">Great! I can walk you through our plans. What's your team size?</div>
+          </div>
+        </div>
+
+        <!-- File attachment badge -->
+        <div id="wp-file-badge" class="wp-file-badge" style="display:none">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          <span id="wp-file-name">document.pdf</span>
+          <span class="wp-file-remove" onclick="removeAttachment()">×</span>
+        </div>
+
+        <!-- Input bar -->
+        <div class="wp-input-row">
+          <div class="wp-attach" onclick="document.getElementById('wp-file-input').click()" title="Attach file">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </div>
+          <input type="file" id="wp-file-input" style="display:none" onchange="handleFileAttach(event)" />
+          <input id="chat-input" class="wp-input" placeholder="Type a message…"
+            onkeydown="if(event.key==='Enter')sendChatMessage()" />
+          <div class="wp-send" id="preview-send-btn" onclick="sendChatMessage()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+        </div>
+
+      </div><!-- /widget-window -->
+
+      <!-- Launcher button -->
+      <div class="widget-launcher open" id="widget-launcher" onclick="toggleWidget()">
+        <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg class="icon-chat" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+
+    </div><!-- /widget-simulator -->
+
+  </div>
+
+</div><!-- /view-main -->
+
+<!-- ── CREATE VIEW ── -->
+<div id="view-create" class="view">
+  <div class="topbar" style="border-bottom:1px solid rgba(255,255,255,0.07)">
+    <div class="topbar-left">
+      <div class="brand">
+        <div class="brand-logo">AO</div>
+        AIMS-OS
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="breadcrumb">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="bc-item" onclick="showMainView()" style="cursor:pointer">Chat Widget</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="bc-current">New Agentic Network</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="avatar-btn">TH</div>
+    </div>
+  </div>
+  <div class="create-page">
+    <div class="create-card">
+      <div style="margin-bottom:20px">
+        <div class="back-btn" onclick="showMainView()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back to widget
+        </div>
+      </div>
+      <div class="create-card-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
+      </div>
+      <h2>Create Agentic Network</h2>
+      <p>Design and configure a new multi-step agentic workflow in the Agentic Studio. You'll be able to assign it to this widget once published.</p>
+      <button class="btn btn-primary" style="margin:0 auto;display:inline-flex" onclick="showMainView()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Open Agentic Studio
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Tab switching ──
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const name = tab.dataset.tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + name).classList.add('active');
+    });
+  });
+
+  function goTo(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+  }
+
+  // ── Network & entity data ──
+  const typeLabels = { 0: 'Agentic Workflow', 1: 'Agentic Network', 2: 'Squad' };
+  let selectedTypeIndex = 1;
+
+  const typeOptions = {
+    0: [
+      { name: 'Lead Capture Flow',      desc: 'Capture and qualify inbound leads · 4 steps',         status: 'active' },
+      { name: 'Email Nurture Sequence', desc: 'Automated follow-up after demo · 6 steps',             status: 'active' },
+      { name: 'Demo Scheduler',         desc: 'Book meetings with qualified leads · 3 steps',          status: 'active' },
+      { name: 'Support Intake',         desc: 'Gather context before escalating · 5 steps',           status: 'paused' }
+    ],
+    1: [
+      { name: 'Sales AI',                  desc: 'Lead qualification & ICP scoring · 3 nodes',        status: 'active' },
+      { name: 'Onboarding Orchestrator',   desc: 'New user onboarding & feature activation · 7 nodes',status: 'active' },
+      { name: 'Support Router',            desc: 'Ticket triage, classification & routing · 5 nodes', status: 'active' },
+      { name: 'Contract Review',           desc: 'Document analysis & compliance check · 4 nodes',    status: 'paused' },
+      { name: 'Invoice Processing',        desc: 'AP automation, approval & ERP sync · 6 nodes',      status: 'active' },
+      { name: 'Retention Playbook',        desc: 'Churn prediction & recovery actions · 8 nodes',     status: 'active' }
+    ],
+    2: [
+      { name: 'Sales Squad',            desc: 'Coordinated outbound & lead outreach · 4 agents',      status: 'active' },
+      { name: 'Customer Success Squad', desc: 'Onboarding, retention & NPS · 3 agents',               status: 'active' },
+      { name: 'Product Research Squad', desc: 'User interviews, synthesis & insights · 5 agents',     status: 'active' }
+    ]
+  };
+
+  const networkData = {
+    'Sales AI': {
+      desc: 'Qualifies leads in real time, scores ICP fit, and routes to the right SDR queue.',
+      tools: ['Salesforce CRM', 'Lead Scoring API', 'Slack Notify', 'HubSpot Write'],
+      capabilities: ['Lead qualification & ICP scoring', 'Multi-conversation handling', 'SDR routing & assignment', 'Human Gate escalation'],
+      nodes: 3, autonomous: '78.5%'
+    },
+    'Onboarding Orchestrator': {
+      desc: 'Guides new users through activation steps, sends contextual tips, and detects at-risk accounts.',
+      tools: ['In-App Events API', 'Email API', 'Knowledge Base', 'Segment'],
+      capabilities: ['Activation step tracking', 'Contextual tip delivery', 'At-risk account detection', 'Branching onboarding paths'],
+      nodes: 7, autonomous: '91%'
+    },
+    'Support Router': {
+      desc: 'Classifies incoming tickets by priority and category, then routes them to the correct support team.',
+      tools: ['Zendesk API', 'Classifier Agent', 'Slack Notify', 'PagerDuty'],
+      capabilities: ['Priority classification', 'Category detection', 'Team routing', 'SLA tracking'],
+      nodes: 5, autonomous: '84%'
+    },
+    'Contract Review': {
+      desc: 'Extracts key clauses, flags compliance issues, and routes contracts for human approval via a Human Gate node.',
+      tools: ['Document Parser', 'Compliance KB', 'DocuSign', 'Legal API'],
+      capabilities: ['Clause extraction', 'Compliance flagging', 'Redline generation', 'Human Gate approval'],
+      nodes: 4, autonomous: '62%'
+    },
+    'Invoice Processing': {
+      desc: 'Processes AP invoices, matches purchase orders, and syncs approved invoices to ERP. Escalates exceptions.',
+      tools: ['OCR Agent', 'ERP Connector', 'SAP Write', 'Email API'],
+      capabilities: ['Invoice OCR & parsing', 'PO matching', 'Exception escalation', 'ERP sync'],
+      nodes: 6, autonomous: '88%'
+    },
+    'Retention Playbook': {
+      desc: 'Detects churn signals and triggers personalized recovery playbooks — discounts, outbound calls, or manager escalation.',
+      tools: ['Churn Predictor', 'CRM Write', 'Email API', 'Calendly'],
+      capabilities: ['Churn signal detection', 'Personalized playbook selection', 'Discount workflow', 'Manager escalation'],
+      nodes: 8, autonomous: '73%'
+    },
+    'Lead Capture Flow': {
+      desc: 'Captures and qualifies inbound leads step by step, scoring intent and routing to the right team.',
+      tools: ['HubSpot Forms', 'Lead Scorer', 'Slack Notify'],
+      capabilities: ['Form field capture', 'Intent scoring', 'SDR routing', 'CRM write'],
+      nodes: 4, autonomous: '81%'
+    },
+    'Email Nurture Sequence': {
+      desc: 'Automated multi-step email follow-up triggered after a demo request or trial signup.',
+      tools: ['Email API', 'CRM Read', 'Personalization Engine'],
+      capabilities: ['Trigger-based sequencing', 'Personalized content', 'Reply detection', 'Unsubscribe handling'],
+      nodes: 6, autonomous: '95%'
+    },
+    'Demo Scheduler': {
+      desc: 'Books meetings with qualified leads by connecting to calendar availability and sending confirmations.',
+      tools: ['Calendly API', 'Email API', 'CRM Write'],
+      capabilities: ['Availability checking', 'Meeting booking', 'Confirmation emails', 'CRM logging'],
+      nodes: 3, autonomous: '88%'
+    },
+    'Support Intake': {
+      desc: 'Gathers context and severity from the visitor before escalating to a human agent or routing to the right queue.',
+      tools: ['Zendesk API', 'Classifier Agent', 'Slack Notify'],
+      capabilities: ['Context gathering', 'Severity classification', 'Queue routing', 'Human Gate escalation'],
+      nodes: 5, autonomous: '76%'
+    },
+    'Sales Squad': {
+      desc: 'A coordinated set of agents running outbound prospecting, qualification, and follow-up in parallel.',
+      tools: ['Apollo.io', 'LinkedIn API', 'CRM Write', 'Email API'],
+      capabilities: ['Prospect enrichment', 'Outbound sequencing', 'Reply handling', 'Pipeline logging'],
+      nodes: 4, autonomous: '79%'
+    },
+    'Customer Success Squad': {
+      desc: 'Handles onboarding, health scoring, and retention workflows for existing accounts.',
+      tools: ['In-App Events API', 'Segment', 'Email API', 'CRM Read'],
+      capabilities: ['Health scoring', 'Onboarding guidance', 'NPS collection', 'Churn prevention'],
+      nodes: 3, autonomous: '85%'
+    },
+    'Product Research Squad': {
+      desc: 'Conducts user interviews, synthesizes feedback, and surfaces insights for the product team.',
+      tools: ['Calendly API', 'Transcription API', 'Notion Write', 'Slack Notify'],
+      capabilities: ['Interview scheduling', 'Transcript analysis', 'Insight synthesis', 'Report generation'],
+      nodes: 5, autonomous: '68%'
+    }
+  };
+
+  function populateNetworkDropdown(typeIndex) {
+    const select = document.getElementById('network-dropdown');
+    const options = typeOptions[typeIndex] || [];
+    select.innerHTML = options.map(o =>
+      `<option value="${o.name}">${o.name}${o.status === 'paused' ? ' (Paused)' : ''}</option>`
+    ).join('');
+    // Auto-select first active option and update summary
+    const firstActive = options.find(o => o.status === 'active');
+    if (firstActive) {
+      select.value = firstActive.name;
+      updateNetworkSummary(firstActive.name);
+    }
+  }
+
+  function onNetworkDropdownChange(select) {
+    updateNetworkSummary(select.value);
+  }
+
+  function updateNetworkSummary(name) {
+    const data = networkData[name];
+    if (!data) return;
+    document.getElementById('ns-name').textContent = name;
+    document.getElementById('ns-desc').textContent = data.desc;
+    document.getElementById('ns-type-badge').textContent = typeLabels[selectedTypeIndex] || 'Agentic Network';
+    document.getElementById('ns-meta').innerHTML =
+      `<span style="font-size:11px;color:rgba(255,255,255,0.38)">${data.nodes} nodes</span>
+       <span style="font-size:11px;color:rgba(255,255,255,0.2)">·</span>
+       <span style="font-size:11px;color:#10b981">Autonomous ${data.autonomous}</span>`;
+    document.getElementById('ns-tools').innerHTML = data.tools.map(t =>
+      `<span class="ns-tool-pill">${t}</span>`).join('');
+    document.getElementById('ns-caps').innerHTML = data.capabilities.map(c =>
+      `<div class="ns-cap-item"><span style="width:4px;height:4px;border-radius:50%;background:#818cf8;flex-shrink:0;margin-top:5px;display:inline-block"></span><span style="font-size:11px;color:rgba(255,255,255,0.6)">${c}</span></div>`
+    ).join('');
+    document.getElementById('network-summary').style.display = 'block';
+  }
+
+  // Type card selection
+  function selectType(el) {
+    const cards = [...document.querySelectorAll('.type-card')];
+    cards.forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTypeIndex = cards.indexOf(el);
+    populateNetworkDropdown(selectedTypeIndex);
+  }
+
+  // Initialize dropdown and summary
+  populateNetworkDropdown(1); // default: Agentic Network
+
+  // ── Primary color sync ──
+  function syncPrimaryColor(val) {
+    if (!val || val.length < 4) return;
+    document.getElementById('ap-sw1').style.background = val;
+    document.getElementById('ap-hex1').value = val;
+    // Sync widget preview elements
+    document.querySelectorAll('.wp-avatar').forEach(a => a.style.background = val);
+    document.querySelectorAll('#preview-send-btn').forEach(s => s.style.background = val);
+    document.querySelectorAll('.wp-msg-user').forEach(m => m.style.background = val);
+    const launcher = document.getElementById('widget-launcher');
+    if (launcher) launcher.style.background = val;
+    const simCta = document.getElementById('sim-cta-btn');
+    if (simCta) simCta.style.background = val;
+  }
+
+  // ── Widget open/close ──
+  function toggleWidget() {
+    const win = document.getElementById('widget-window');
+    const launcher = document.getElementById('widget-launcher');
+    win.classList.toggle('open');
+    launcher.classList.toggle('open');
+  }
+
+  // ── Avatar preset ──
+  function selectPreset(el) {
+    document.querySelectorAll('.avatar-preset').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('avatar-custom').style.display = 'none';
+  }
+
+  // Avatar upload
+  function previewAvatar(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const preview = document.getElementById('avatar-custom');
+      document.getElementById('avatar-img').src = ev.target.result;
+      preview.style.display = 'flex';
+      document.querySelectorAll('.avatar-preset').forEach(p => p.classList.remove('selected'));
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── File attachment ──
+  function handleFileAttach(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('wp-file-name').textContent = file.name;
+    document.getElementById('wp-file-badge').style.display = 'flex';
+    e.target.value = '';
+  }
+
+  function removeAttachment() {
+    document.getElementById('wp-file-badge').style.display = 'none';
+  }
+
+  // ── Domain chips ──
+  function addDomain() {
+    const input = document.getElementById('domain-input');
+    const domain = input.value.trim();
+    if (!domain) return;
+    const chips = document.getElementById('domain-chips');
+    const chip = document.createElement('span');
+    chip.className = 'domain-chip';
+    chip.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" style="width:11px;height:11px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>${domain}<span class="domain-chip-x" onclick="this.parentElement.remove()">×</span>`;
+    chips.appendChild(chip);
+    input.value = '';
+  }
+
+  // ── Functional chat ──
+  const chatReplies = [
+    "Got it! Let me look into that for you.",
+    "Thanks for reaching out. Can you tell me more about your needs?",
+    "Sure, I can help with that. What's your team size?",
+    "Great question — our plans start at $49/mo. Want to see a comparison?",
+    "I've noted your request. Is there anything else I can help with?"
+  ];
+
+  function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+    const chat = document.getElementById('wp-chat-messages');
+
+    // User message
+    const userEl = document.createElement('div');
+    userEl.className = 'wp-msg-user';
+    userEl.textContent = msg;
+    chat.appendChild(userEl);
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
+
+    // Typing indicator
+    const typingEl = document.createElement('div');
+    typingEl.className = 'wp-bubble-agent';
+    typingEl.style.opacity = '0.5';
+    typingEl.innerHTML = `<div class="wp-avatar">ST</div><div class="wp-msg" style="letter-spacing:2px">···</div>`;
+    chat.appendChild(typingEl);
+    chat.scrollTop = chat.scrollHeight;
+
+    // Agent response
+    setTimeout(() => {
+      chat.removeChild(typingEl);
+      const agentEl = document.createElement('div');
+      agentEl.className = 'wp-bubble-agent';
+      agentEl.innerHTML = `<div class="wp-avatar">ST</div><div class="wp-msg">${chatReplies[Math.floor(Math.random() * chatReplies.length)]}</div>`;
+      chat.appendChild(agentEl);
+      chat.scrollTop = chat.scrollHeight;
+    }, 900);
+  }
+
+  // ── View switching ──
+  function showCreateView() {
+    document.getElementById('view-main').classList.remove('active');
+    document.getElementById('view-create').classList.add('active');
+  }
+
+  function showMainView() {
+    document.getElementById('view-create').classList.remove('active');
+    document.getElementById('view-main').classList.add('active');
+  }
+</script>
+</body>
+</html>
