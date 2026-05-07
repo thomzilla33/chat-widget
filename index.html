@@ -355,19 +355,41 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
 }
 .toggle.on::after { transform:translateX(16px); background:#fff; }
 
-/* ── RIGHT PANEL (Widget Simulator) ── */
+/* ── RIGHT PANEL (Widget Simulator) — collapsible, mirrors sidebar pattern ── */
 .right-panel {
   width:380px; flex-shrink:0; border-left:1px solid rgba(255,255,255,0.07);
   background:#111; display:flex; flex-direction:column; overflow:hidden;
+  transition:width .22s cubic-bezier(.4,0,.2,1);
 }
 .rp-header {
-  display:flex; align-items:center; justify-content:space-between;
+  display:flex; align-items:center; gap:6px;
   padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0;
 }
-.rp-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.28); }
-.rp-ext { font-size:11px; color:rgba(255,255,255,0.28); cursor:pointer; }
+.rp-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.28); flex:1; transition:opacity .12s; white-space:nowrap; overflow:hidden }
+.rp-ext { font-size:11px; color:rgba(255,255,255,0.28); cursor:pointer; transition:opacity .12s; flex-shrink:0 }
 .rp-ext:hover { color:rgba(255,255,255,0.6); }
+.rp-toggle{
+  width:24px;height:24px;border-radius:6px;background:transparent;border:none;
+  color:rgba(255,255,255,0.32);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .12s,color .12s;flex-shrink:0;padding:0;font-family:inherit;
+}
+.rp-toggle:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.7)}
+.rp-toggle svg{width:13px;height:13px;transition:transform .22s cubic-bezier(.4,0,.2,1)}
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(.7);} }
+
+/* Collapsed state — rail 48px */
+.right-panel.rp-collapsed{width:48px;cursor:pointer}
+.right-panel.rp-collapsed .rp-header{padding:11px 0;justify-content:center;border-bottom:none}
+.right-panel.rp-collapsed .rp-title,
+.right-panel.rp-collapsed .rp-ext,
+.right-panel.rp-collapsed .widget-simulator{display:none}
+.right-panel.rp-collapsed .rp-toggle svg{transform:rotate(180deg)}
+
+/* Vertical "WIDGET PREVIEW" label shown only when collapsed */
+.rp-rail-label{display:none;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.28);writing-mode:vertical-rl;transform:rotate(180deg);padding:14px 0;text-align:center;flex:1;white-space:nowrap;user-select:none;pointer-events:none}
+.right-panel.rp-collapsed .rp-rail-label{display:block}
+.right-panel.rp-collapsed:hover{background:#161616}
+.right-panel.rp-collapsed:hover .rp-toggle{color:rgba(255,255,255,0.7)}
 
 /* Simulated website */
 .widget-simulator {
@@ -554,81 +576,617 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
 }
 .network-dropdown-select:focus { border-color:rgba(37,99,235,0.5); box-shadow:0 0 0 3px rgba(37,99,235,0.1); }
 .network-dropdown-select option { background:#1a1a1a; color:rgba(255,255,255,0.85); }
+
+/* ════════════════════════════════════════════════════════════════════
+   AGENTIC-STUDIO SHELL (sidebar + fixed topbar) — ported verbatim
+   ════════════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#0a0d1a; --bg2:#0f172e; --sb:#000;
+  --cb:rgba(255,255,255,0.04); --cbh:rgba(255,255,255,0.07);
+  --bd:rgba(255,255,255,0.08); --bds:rgba(255,255,255,0.16);
+  --pri:#2B7FFF; --pri-bg:rgba(43,127,255,0.12); --pri-bd:rgba(43,127,255,0.30);
+  --ok:#05DF72; --ok-bg:rgba(5,223,114,0.12);
+  --err:#FF6467; --err-bg:rgba(255,100,103,0.12);
+  --warn:#FDC700; --warn-bg:rgba(253,199,0,0.12);
+  --pur:#A78BFA; --pur-bg:rgba(167,139,250,0.12);
+  --t1:rgba(255,255,255,0.90); --t2:rgba(255,255,255,0.60);
+  --t3:rgba(255,255,255,0.38); --t4:rgba(255,255,255,0.22);
+  --grad:linear-gradient(135deg,#00C2C2 0%,#155DFC 100%);
+  --r4:4px;--r6:6px;--r8:8px;--r10:10px;--r12:12px;--r20:20px;
+}
+
+/* App shell */
+.app{display:flex;flex:1;height:100vh;padding:60px 8px 8px 0;box-sizing:border-box;gap:8px;overflow:hidden;background:var(--bg)}
+
+/* Sidebar */
+.sidebar{
+  width:52px;flex-shrink:0;background:var(--sb);
+  display:flex;flex-direction:column;border-radius:12px;overflow:hidden;
+  transition:width .22s cubic-bezier(.4,0,.2,1);
+}
+.sidebar.sb-expanded{width:220px}
+.sb-nav{flex:1;display:flex;flex-direction:column;padding:6px 8px;gap:1px;overflow:hidden}
+.sb-item{
+  display:flex;align-items:center;height:36px;border-radius:var(--r8);
+  background:transparent;border:none;color:var(--t3);cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:500;width:100%;text-align:left;
+  transition:color .12s, background .12s;flex-shrink:0;
+}
+.sidebar:not(.sb-expanded) .sb-item{justify-content:center;padding:0}
+.sidebar.sb-expanded .sb-item{justify-content:flex-start;padding:0 8px;gap:10px}
+.sb-item-icon{
+  width:36px;height:36px;border-radius:var(--r8);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .12s, color .12s;
+}
+.sb-item-icon svg{width:17px;height:17px}
+.sb-item:hover{background:transparent;color:var(--t2)}
+.sb-item:hover .sb-item-icon{background:rgba(255,255,255,0.09)}
+.sidebar:not(.sb-expanded) .sb-item.active{background:transparent}
+.sidebar:not(.sb-expanded) .sb-item.active .sb-item-icon{
+  background:var(--grad);color:#fff;
+}
+.sidebar.sb-expanded .sb-item.active{
+  background:rgba(43,127,255,0.10);color:var(--t1);
+}
+.sidebar.sb-expanded .sb-item.active .sb-item-icon{
+  background:var(--grad);color:#fff;
+}
+.sb-item.active:hover .sb-item-icon{background:var(--grad)}
+.sb-label{opacity:0;transition:opacity .12s;pointer-events:none;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar.sb-expanded .sb-label{opacity:1;pointer-events:auto}
+.sb-chevron{margin-left:auto;width:13px;height:13px;flex-shrink:0;transition:transform .2s;opacity:0;color:rgba(255,255,255,0.30)}
+.sb-item.sb-open .sb-chevron{transform:rotate(180deg)}
+.sb-sub{display:none;flex-direction:column;gap:1px;padding:2px 0 4px}
+.sb-sub.open{display:flex}
+.sidebar:not(.sb-expanded) .sb-sub{display:none!important}
+.sb-sub-item{display:flex;align-items:center;gap:9px;height:30px;padding:0 8px 0 50px;border-radius:var(--r6);cursor:pointer;color:var(--t3);font-size:12px;font-weight:500;transition:all .1s;background:none;border:none;width:100%;text-align:left;font-family:inherit}
+.sb-sub-item:hover{background:rgba(255,255,255,0.05);color:var(--t2)}
+.sb-sub-item.sub-active{color:var(--t1);background:rgba(255,255,255,0.04)}
+.sb-sub-dot{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.5}
+.sb-sub-item.sub-active .sb-sub-dot{opacity:1;background:var(--pri)}
+.sb-sub-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-sub-count{font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:rgba(255,255,255,0.07);color:var(--t3);flex-shrink:0}
+.sidebar.sb-expanded .sb-chevron{opacity:1}
+.sb-divider{height:1px;background:rgba(255,255,255,0.06);margin:4px 0;flex-shrink:0}
+.sb-bottom{flex-shrink:0;border-top:1px solid rgba(255,255,255,0.05);padding:4px 8px 8px}
+.sb-toggle{
+  display:flex;align-items:center;height:36px;width:100%;border-radius:var(--r8);
+  background:transparent;border:none;color:var(--t3);cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:500;
+  transition:color .12s, background .12s;
+}
+.sidebar:not(.sb-expanded) .sb-toggle{justify-content:center;gap:0;padding:0}
+.sidebar.sb-expanded .sb-toggle{justify-content:flex-start;padding:0 8px;gap:10px}
+.sb-toggle:hover{background:rgba(255,255,255,0.06);color:#80AFFF}
+.sb-toggle-icon{width:18px;height:18px;flex-shrink:0;transition:transform .22s cubic-bezier(.4,0,.2,1)}
+.sidebar.sb-expanded .sb-toggle-icon{transform:rotate(180deg)}
+.sb-toggle-label{opacity:0;transition:opacity .12s}
+.sidebar.sb-expanded .sb-toggle-label{opacity:1}
+
+/* Topbar — OVERRIDES the previous .topbar rule (last-rule-wins) */
+.topbar{position:fixed;top:0;left:0;right:0;height:52px;display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;z-index:20;background:rgba(10,13,26,0.72);backdrop-filter:blur(20px) saturate(1.8);-webkit-backdrop-filter:blur(20px) saturate(1.8)}
+.tb-left{flex:1;display:flex;align-items:center;gap:6px}
+.tb-launcher{display:flex;align-items:center;gap:8px;height:34px;padding:0 9px 0 6px;border-radius:var(--r8);background:transparent;border:none;cursor:pointer;color:var(--t1);transition:background .15s;flex-shrink:0;position:relative;font-family:inherit}
+.tb-launcher:hover{background:rgba(255,255,255,0.06)}
+.tb-launcher-logo{width:26px;height:26px;border-radius:7px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;flex-shrink:0;letter-spacing:-.3px}
+.tb-launcher-name{font-size:13px;font-weight:700;color:var(--t1);white-space:nowrap}
+.tb-launcher-chevron{color:var(--t3);flex-shrink:0;transition:transform .15s}
+.tb-launcher.sw-open .tb-launcher-chevron{transform:rotate(180deg)}
+.studio-sw{position:absolute;top:calc(100% + 8px);left:0;width:248px;background:#131929;border:1px solid rgba(255,255,255,0.10);border-radius:12px;box-shadow:0 20px 56px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04);z-index:200;overflow:hidden;opacity:0;transform:translateY(-6px) scale(0.97);pointer-events:none;transition:opacity .15s cubic-bezier(.4,0,.2,1),transform .15s cubic-bezier(.4,0,.2,1)}
+.studio-sw.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.studio-sw-hd{padding:12px 14px 8px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.studio-sw-title{font-size:10px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:.08em}
+.studio-item{display:flex;align-items:center;gap:11px;padding:9px 12px;cursor:pointer;transition:background .1s;text-decoration:none;border:none;background:none;width:100%;text-align:left}
+.studio-item:hover{background:rgba(255,255,255,0.05)}
+.studio-item.s-active{background:rgba(43,127,255,0.08)}
+.studio-item-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;flex-shrink:0;letter-spacing:-.3px}
+.studio-item-info{flex:1;min-width:0;text-align:left}
+.studio-item-name{font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap}
+.studio-item-desc{font-size:11px;color:var(--t3);margin-top:1px}
+.studio-item-badge{width:16px;height:16px;flex-shrink:0;color:var(--pri)}
+.tb-search{width:340px;flex-shrink:0;position:relative}
+.tb-search input{width:100%;height:32px;background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:var(--r8);padding:0 12px 0 32px;color:var(--t1);font-size:13px;outline:none;transition:border-color .15s;font-family:inherit}
+.tb-search input:focus{border-color:var(--pri-bd)}
+.tb-search input::placeholder{color:var(--t3)}
+.tb-search-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
+.tb-right{display:flex;align-items:center;gap:4px;flex:1;justify-content:flex-end}
+.tb-right .icon-btn{width:32px;height:32px;border-radius:var(--r8);background:transparent;border:none;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .1s,color .1s}
+.tb-right .icon-btn:hover{background:rgba(255,255,255,0.07);color:var(--t2)}
+.avatar-sm{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#155DFC,#00C2C2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;cursor:pointer;flex-shrink:0}
+
+/* Make .view fill the remaining space inside .app */
+.view.active{flex:1;min-width:0;height:100%}
+.app .main{height:100%}
+
+/* Toast */
+.toast-ctr{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:1000;pointer-events:none}
+.toast{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#131929;border:1px solid var(--bd);border-radius:var(--r8);box-shadow:0 8px 24px rgba(0,0,0,0.5);color:var(--t1);font-size:13px;font-weight:500;pointer-events:auto}
+
+/* ════════════════════════════════════════════════════════════════════
+   OVERVIEW WIDGET GRID (draggable + resizable, ported from agentic-studio)
+   ════════════════════════════════════════════════════════════════════ */
+.ov-widget-grid{display:grid;grid-template-columns:1fr 320px;grid-auto-rows:auto;gap:16px;align-items:start;margin-bottom:24px}
+.ov-widget{position:relative}
+.ov-widget[data-pos="1"]{grid-column:1;grid-row:1}
+.ov-widget[data-pos="2"]{grid-column:1;grid-row:2}
+.ov-widget[data-pos="3"]{grid-column:2;grid-row:1/span 2}
+.ov-widget[data-pos="4"]{grid-column:1;grid-row:3}
+.ov-widget[data-pos="5"]{grid-column:2;grid-row:3}
+/* To add more cards: extend with [data-pos="6"], [data-pos="7"]... */
+.ov-widget.ov-dragging{opacity:.25;pointer-events:none}
+.ov-widget.ov-drag-over>.ov-card{outline:2px dashed var(--pri);outline-offset:3px;border-radius:var(--r12)}
+
+.ov-card{background:var(--cb);border:1px solid var(--bd);border-radius:var(--r12);overflow:hidden}
+.ov-card-hd{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--bd)}
+.ov-card-title{flex:1;font-size:13px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:8px}
+.ov-card-title svg{width:14px;height:14px;color:var(--t3)}
+.ov-card-action{font-size:12px;font-weight:600;color:var(--pri);cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:4px;font-family:inherit}
+.ov-card-action:hover{color:#5BA3FF}
+.ov-card-body{padding:14px 16px}
+
+.ov-drag-grip{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:var(--r4);cursor:grab;color:var(--t4);flex-shrink:0;transition:color .15s,background .15s;background:transparent;border:none;padding:0}
+.ov-drag-grip:hover{color:var(--t2);background:rgba(255,255,255,.07)}
+.ov-drag-grip:active{cursor:grabbing}
+.ov-resize-hdl{position:absolute;bottom:3px;right:3px;width:18px;height:18px;cursor:se-resize;display:flex;align-items:flex-end;justify-content:flex-end;padding:3px;opacity:0;transition:opacity .15s;z-index:5;color:var(--t4)}
+.ov-widget:hover .ov-resize-hdl{opacity:1}
+.ov-resize-hdl:hover{color:var(--t2)}
+
+/* Strip inner borders on wrapped content so .ov-card provides the chrome */
+.ov-card .metrics-grid{border:none!important;margin:0!important;border-radius:0!important}
+.ov-card .info-grid{border:none!important;margin:0!important;border-radius:0!important}
+.ov-card .assigned-card{border:none!important;margin:0!important;border-radius:0!important;padding:14px 16px!important}
+
+/* On narrow viewports, stack to 1 column */
+@media (max-width: 1100px){
+  .ov-widget-grid{grid-template-columns:1fr}
+  .ov-widget[data-pos]{grid-column:1!important;grid-row:auto!important}
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   DESIGN-SYSTEM LIST CARD ROW PATTERN (Activity / Notes)
+   ════════════════════════════════════════════════════════════════════ */
+.ds-card-act{width:24px;height:24px;border-radius:6px;background:transparent;border:none;color:var(--t4);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;padding:0}
+.ds-card-act:hover{background:rgba(255,255,255,0.07);color:var(--t2)}
+.ds-card-act svg{width:13px;height:13px}
+.ds-card-act.danger:hover{background:var(--err-bg);color:var(--err)}
+
+.ds-rows{display:flex;flex-direction:column}
+.ds-row{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:background .1s;text-decoration:none;color:inherit;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;font-family:inherit}
+.ds-row:last-child{border-bottom:none}
+.ds-row:hover{background:rgba(255,255,255,0.025)}
+.ds-row-ico{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--t2)}
+.ds-row-ico svg{width:13px;height:13px}
+.ds-row-ico.tone-pri{background:rgba(43,127,255,0.12);color:var(--pri)}
+.ds-row-ico.tone-ok{background:var(--ok-bg);color:var(--ok)}
+.ds-row-ico.tone-pur{background:rgba(167,139,250,0.12);color:var(--pur)}
+.ds-row-ico.tone-warn{background:var(--warn-bg);color:var(--warn)}
+.ds-row-body{flex:1;min-width:0}
+.ds-row-title{font-size:13px;font-weight:600;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ds-row-sub{font-size:11px;color:var(--t3);margin-top:2px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis}
+.ds-row-meta{font-size:11px;color:var(--t4);flex-shrink:0;display:flex;align-items:center;gap:6px;font-family:'SF Mono',ui-monospace,monospace;letter-spacing:-.2px}
+.ds-row-badge{width:14px;height:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ds-row-badge.warn{color:var(--warn)}
+.ds-row-badge.err{color:var(--err)}
+.ds-row-chev{width:11px;height:11px;color:var(--t4);flex-shrink:0;margin-left:4px}
+.ds-row.compact{padding:10px 14px}
+.ds-row.compact .ds-row-sub{display:none}
+
+.ds-card-ft{padding:9px 14px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:var(--t4);background:rgba(255,255,255,0.015);display:flex;align-items:center;justify-content:space-between}
+.ds-card-ft-link{color:var(--pri);font-weight:600;cursor:pointer;text-decoration:none;background:none;border:none;font-size:11px;font-family:inherit;padding:0;display:flex;align-items:center;gap:3px}
+.ds-card-ft-link:hover{color:#5BA3FF}
+
+/* ════════════════════════════════════════════════════════════════════
+   PUBLISH SIMULATION MODAL
+   ════════════════════════════════════════════════════════════════════ */
+.pub-overlay{position:fixed;inset:0;background:rgba(5,7,18,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .18s}
+.pub-overlay.open{opacity:1;pointer-events:auto}
+.pub-modal{width:520px;max-width:calc(100vw - 40px);max-height:calc(100vh - 80px);background:#0e1424;border:1px solid var(--bd);border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,0.55);overflow:hidden;display:flex;flex-direction:column;transform:translateY(8px) scale(0.97);transition:transform .18s cubic-bezier(.4,0,.2,1)}
+.pub-overlay.open .pub-modal{transform:translateY(0) scale(1)}
+.pub-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.pub-hd-title{font-size:14px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:10px}
+.pub-hd-ico{width:28px;height:28px;border-radius:8px;background:rgba(43,127,255,0.18);display:flex;align-items:center;justify-content:center;color:var(--pri);flex-shrink:0}
+.pub-hd-ico svg{width:14px;height:14px}
+.pub-hd-ico.ok{background:rgba(5,223,114,0.18);color:var(--ok)}
+.pub-close{width:28px;height:28px;border-radius:7px;background:transparent;border:none;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;font-family:inherit}
+.pub-close:hover{background:rgba(255,255,255,0.06);color:var(--t1)}
+.pub-body{padding:18px 20px;overflow-y:auto;flex:1}
+.pub-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t4);margin-bottom:10px}
+.pub-summary-card{background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:11px;margin-bottom:6px}
+.pub-summary-ico{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.pub-summary-ico svg{width:14px;height:14px}
+.pub-summary-text{flex:1;min-width:0}
+.pub-summary-label{font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:0.06em}
+.pub-summary-value{font-size:13px;font-weight:600;color:var(--t1);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.pub-version-bump{font-size:10px;color:var(--ok);background:var(--ok-bg);padding:2px 7px;border-radius:5px;font-weight:700;font-family:'SF Mono',ui-monospace,monospace;letter-spacing:-.2px}
+.pub-disclaimer{font-size:11px;color:var(--t4);line-height:1.5;margin-top:12px;padding:10px 12px;background:rgba(43,127,255,0.06);border-left:2px solid var(--pri-bd);border-radius:6px}
+
+.pub-progress-list{display:flex;flex-direction:column;gap:8px}
+.pub-step{display:flex;align-items:center;gap:12px;padding:11px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--bd);border-radius:10px;transition:all .25s ease}
+.pub-step-icon{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);color:var(--t4);transition:all .25s}
+.pub-step-icon svg{width:12px;height:12px}
+.pub-step-text{flex:1;font-size:13px;color:var(--t3);font-weight:500;transition:color .25s}
+.pub-step-time{font-size:11px;color:var(--t4);font-family:'SF Mono',ui-monospace,monospace}
+.pub-step.active{border-color:var(--pri-bd);background:var(--pri-bg)}
+.pub-step.active .pub-step-icon{background:var(--pri-bg);color:var(--pri)}
+.pub-step.active .pub-step-text{color:var(--t1)}
+.pub-step.done{border-color:rgba(5,223,114,0.22);background:rgba(5,223,114,0.05)}
+.pub-step.done .pub-step-icon{background:var(--ok-bg);color:var(--ok)}
+.pub-step.done .pub-step-text{color:var(--t1)}
+.pub-spin{animation:pubspin .8s linear infinite}
+@keyframes pubspin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+.pub-success{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:8px 0 4px}
+.pub-success-circle{width:60px;height:60px;border-radius:50%;background:rgba(5,223,114,0.12);border:1px solid rgba(5,223,114,0.35);display:flex;align-items:center;justify-content:center;color:var(--ok);position:relative;animation:pub-pop .35s cubic-bezier(.34,1.56,.64,1)}
+.pub-success-circle::after{content:'';position:absolute;inset:-6px;border-radius:50%;background:rgba(5,223,114,0.18);z-index:-1;animation:pub-ring 1.4s ease-out infinite}
+@keyframes pub-ring{0%{transform:scale(.85);opacity:.6}100%{transform:scale(1.6);opacity:0}}
+@keyframes pub-pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.pub-success-circle svg{width:24px;height:24px}
+.pub-success-title{font-size:18px;font-weight:700;color:var(--t1);margin-top:4px}
+.pub-success-sub{font-size:12px;color:var(--t3)}
+.pub-snippet-wrap{position:relative;margin-top:6px}
+.pub-snippet{background:#000;border:1px solid var(--bd);border-radius:8px;padding:14px 44px 14px 14px;font-family:'SF Mono',ui-monospace,monospace;font-size:11px;color:#86efac;line-height:1.6;white-space:pre-wrap;word-break:break-all;text-align:left}
+.pub-snippet .tk-tag{color:#f472b6}
+.pub-snippet .tk-attr{color:#fbbf24}
+.pub-snippet .tk-str{color:#86efac}
+.pub-copy{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.06);border:1px solid var(--bd);color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.pub-copy:hover{background:rgba(255,255,255,0.1);color:var(--t1);border-color:var(--bds)}
+.pub-copy svg{width:13px;height:13px}
+
+.pub-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+.pub-stat{background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:8px;padding:9px 12px}
+.pub-stat-label{font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:0.06em}
+.pub-stat-value{font-size:13px;font-weight:700;color:var(--t1);margin-top:3px;font-family:'SF Mono',ui-monospace,monospace;letter-spacing:-.2px}
+
+.pub-ft{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:13px 18px;border-top:1px solid var(--bd);background:rgba(0,0,0,0.18);flex-shrink:0}
+
+/* ════════════════════════════════════════════════════════════════════
+   CREATE-WIDGET FORM (reuses .pub-* modal chrome; adds form internals)
+   ════════════════════════════════════════════════════════════════════ */
+.nw-section{margin-bottom:18px}
+.nw-section:last-child{margin-bottom:0}
+.nw-section-hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;gap:8px}
+.nw-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t4)}
+.nw-section-meta{font-size:10px;color:var(--t4)}
+.nw-section-meta.req{color:var(--err)}
+
+.nw-field{margin-bottom:10px}
+.nw-field:last-child{margin-bottom:0}
+.nw-label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px}
+.nw-label .nw-req{color:var(--err);margin-left:2px}
+.nw-input,.nw-textarea{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bd);
+  border-radius:8px;padding:10px 12px;color:var(--t1);font-size:13px;
+  font-family:inherit;outline:none;transition:border-color .12s,background .12s;
+  box-sizing:border-box;
+}
+.nw-input:focus,.nw-textarea:focus{border-color:var(--pri-bd);background:rgba(43,127,255,0.04)}
+.nw-input::placeholder,.nw-textarea::placeholder{color:var(--t4)}
+.nw-textarea{resize:vertical;min-height:64px;line-height:1.5}
+.nw-help{font-size:11px;color:var(--t4);margin-top:5px}
+
+/* Agent radio list */
+.nw-radio-group{display:flex;flex-direction:column;gap:6px;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.nw-radio{display:flex;align-items:center;gap:11px;padding:11px 13px;cursor:pointer;background:transparent;border:none;border-bottom:1px solid var(--bd);width:100%;text-align:left;font-family:inherit;color:inherit;transition:background .1s}
+.nw-radio:last-child{border-bottom:none}
+.nw-radio:hover{background:rgba(255,255,255,0.025)}
+.nw-radio.selected{background:rgba(43,127,255,0.06)}
+.nw-radio-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--t4);flex-shrink:0;position:relative;transition:border-color .1s}
+.nw-radio.selected .nw-radio-dot{border-color:var(--pri)}
+.nw-radio-dot::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--pri);opacity:0;transition:opacity .1s}
+.nw-radio.selected .nw-radio-dot::after{opacity:1}
+.nw-radio-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,0.05);color:var(--t3)}
+.nw-radio-ico svg{width:13px;height:13px}
+.nw-radio.tone-pur .nw-radio-ico{background:rgba(167,139,250,0.15);color:var(--pur)}
+.nw-radio.tone-pri .nw-radio-ico{background:rgba(43,127,255,0.15);color:var(--pri)}
+.nw-radio-body{flex:1;min-width:0}
+.nw-radio-name{font-size:13px;font-weight:600;color:var(--t1)}
+.nw-radio-sub{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* Trusted domains row */
+.nw-domain-input-row{display:flex;gap:6px}
+.nw-domain-input-row .nw-input{flex:1}
+.nw-add-btn{height:38px;padding:0 14px;background:rgba(43,127,255,0.12);border:1px solid var(--pri-bd);border-radius:8px;color:var(--pri);font-size:12px;font-weight:600;cursor:pointer;transition:all .1s;font-family:inherit;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.nw-add-btn:hover{background:rgba(43,127,255,0.18)}
+.nw-add-btn:disabled{opacity:0.4;cursor:not-allowed;background:rgba(255,255,255,0.04);color:var(--t4);border-color:var(--bd)}
+.nw-add-btn svg{width:11px;height:11px}
+.nw-domain-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:0}
+.nw-domain-list:empty{display:none}
+.nw-chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 6px 0 10px;background:rgba(255,255,255,0.06);border:1px solid var(--bd);border-radius:20px;font-size:12px;color:var(--t1);font-family:'SF Mono',ui-monospace,monospace;letter-spacing:-.2px}
+.nw-chip-ico{width:11px;height:11px;color:var(--t3);flex-shrink:0}
+.nw-chip-x{width:18px;height:18px;border-radius:50%;background:transparent;border:none;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1;font-family:inherit;padding:0;transition:all .1s}
+.nw-chip-x:hover{background:rgba(255,100,103,0.12);color:var(--err)}
+
+/* Category select (custom dropdown styling) */
+.nw-select{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bd);
+  border-radius:8px;padding:10px 36px 10px 12px;color:var(--t1);font-size:13px;
+  font-family:inherit;outline:none;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  transition:border-color .12s;
+}
+.nw-select:focus{border-color:var(--pri-bd)}
+.nw-select option{background:#0e1424;color:var(--t1)}
+
+/* Status preview banner */
+.nw-status-preview{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;margin-top:6px;border:1px solid var(--bd);transition:all .15s}
+.nw-status-preview.draft{background:rgba(253,199,0,0.06);border-color:rgba(253,199,0,0.22)}
+.nw-status-preview.active{background:rgba(5,223,114,0.05);border-color:rgba(5,223,114,0.22)}
+.nw-status-ico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,0.06);color:var(--t3)}
+.nw-status-preview.draft .nw-status-ico{background:rgba(253,199,0,0.15);color:var(--warn)}
+.nw-status-preview.active .nw-status-ico{background:rgba(5,223,114,0.15);color:var(--ok)}
+.nw-status-ico svg{width:13px;height:13px}
+.nw-status-text{flex:1;font-size:12px;color:var(--t2);line-height:1.5}
+.nw-status-text strong{color:var(--t1);font-weight:700}
+.nw-status-preview.draft .nw-status-text strong{color:var(--warn)}
+.nw-status-preview.active .nw-status-text strong{color:var(--ok)}
+
+/* Primary action button — match existing btn-primary but with disabled state */
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;background:rgba(43,127,255,0.4)}
+
+/* ════════════════════════════════════════════════════════════════════
+   LIST VIEW (Chat Widgets — mirrors agentic-studio's vList)
+   ════════════════════════════════════════════════════════════════════ */
+.list-scroll{flex:1;overflow-y:auto;background:#0d0d0d}
+.list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:24px 28px 16px;gap:16px}
+.list-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+.list-sub{font-size:13px;color:rgba(255,255,255,0.55)}
+.btn-create{display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;background:#2563eb;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap;font-family:inherit;flex-shrink:0}
+.btn-create:hover{background:#1d4ed8}
+.btn-create svg{width:14px;height:14px}
+
+.list-filters{display:flex;align-items:center;gap:8px;padding:0 28px 16px;flex-wrap:wrap}
+.list-filter-wrap{position:relative;flex-shrink:0}
+.list-filter-wrap input{height:34px;background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:8px;padding:0 12px 0 32px;color:var(--t1);font-size:13px;outline:none;width:220px;font-family:inherit}
+.list-filter-wrap input:focus{border-color:var(--pri-bd)}
+.list-filter-wrap input::placeholder{color:var(--t3)}
+.list-filter-wrap-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
+.list-chips{display:flex;gap:5px;align-items:center}
+.list-chip{height:28px;padding:0 12px;border-radius:7px;background:transparent;border:1px solid var(--bd);color:var(--t3);font-size:12px;font-weight:600;cursor:pointer;transition:all .12s;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+.list-chip:hover{color:var(--t2);border-color:var(--bds)}
+.list-chip.active{background:rgba(255,255,255,0.07);color:var(--t1);border-color:var(--bds)}
+.list-chip-count{font-size:11px;font-weight:700;color:inherit;opacity:0.7}
+.list-sort{margin-left:auto;height:28px;padding:0 10px;border:1px solid var(--bd);border-radius:8px;background:transparent;color:var(--t3);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit}
+.list-sort:hover{border-color:var(--bds);color:var(--t2)}
+
+.wgt-list{display:flex;flex-direction:column;padding:0 28px 28px;gap:10px}
+.wgt-card{background:rgba(255,255,255,0.02);border:1px solid var(--bd);border-radius:12px;padding:16px 18px 14px;cursor:pointer;transition:border-color .15s,background .15s;position:relative}
+.wgt-card:hover{border-color:var(--bds);background:rgba(255,255,255,0.035)}
+.wgt-card.draft{background:rgba(253,199,0,0.025);border-color:rgba(253,199,0,0.18)}
+.wgt-card.draft:hover{border-color:rgba(253,199,0,0.32)}
+
+.wgt-row1{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.wgt-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(43,127,255,0.15);color:var(--pri)}
+.wgt-icon.draft{background:rgba(253,199,0,0.15);color:var(--warn)}
+.wgt-icon.inactive{background:rgba(255,255,255,0.06);color:var(--t3)}
+.wgt-icon svg{width:14px;height:14px}
+.wgt-name{font-size:15px;font-weight:700;color:var(--t1);margin-right:2px}
+.wgt-time{font-size:11px;color:var(--t3);white-space:nowrap;margin-left:auto}
+.wgt-menu{width:28px;height:28px;background:transparent;border:none;color:var(--t3);cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all .1s;flex-shrink:0;padding:0}
+.wgt-menu:hover{background:rgba(255,255,255,0.07);color:var(--t2)}
+
+.wgt-status{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0}
+.wgt-status-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.wgt-status.active{background:var(--ok-bg);color:var(--ok)}
+.wgt-status.inactive{background:rgba(255,255,255,0.06);color:var(--t3)}
+.wgt-status.draft{background:var(--warn-bg);color:var(--warn)}
+
+.wgt-desc{font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.5}
+.wgt-desc .dim{color:var(--t3)}
+.wgt-desc .agent-name{color:var(--t1);font-weight:600}
+
+.wgt-ai-row{display:flex;align-items:center;gap:9px;padding:9px 12px;background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.16);border-radius:8px;margin-bottom:12px}
+.wgt-ai-icon{width:18px;height:18px;border-radius:5px;background:rgba(167,139,250,0.18);display:flex;align-items:center;justify-content:center;color:var(--pur);flex-shrink:0}
+.wgt-ai-icon svg{width:11px;height:11px}
+.wgt-ai-label{font-size:11px;font-weight:700;color:var(--pur);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.wgt-ai-text{font-size:12px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+
+.wgt-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.wgt-mi{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t3);white-space:nowrap}
+.wgt-mi svg{width:12px;height:12px;color:var(--t4);flex-shrink:0}
+.wgt-mi.ok{color:var(--ok)}
+.wgt-mi.ok svg{color:var(--ok)}
+.wgt-mi-strong{color:var(--t2);font-weight:600}
+.wgt-tag{margin-left:auto;height:22px;padding:0 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,0.06);color:var(--t1);flex-shrink:0;display:inline-flex;align-items:center;gap:5px}
+
+.wgt-incomplete{display:flex;align-items:center;gap:9px;padding:10px 13px;background:rgba(253,199,0,0.07);border:1px solid rgba(253,199,0,0.22);border-radius:8px;margin-top:6px}
+.wgt-incomplete-ic{width:18px;height:18px;color:var(--warn);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.wgt-incomplete-text{font-size:12px;color:var(--t2);flex:1;line-height:1.5}
+.wgt-incomplete-link{color:var(--pri);font-weight:600;cursor:pointer}
+.wgt-incomplete-link:hover{color:#5BA3FF;text-decoration:underline}
+
+.wgt-empty{padding:48px 28px;text-align:center;color:var(--t3);font-size:13px}
+
+.back-to-list{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:var(--t3);font-size:12px;font-weight:500;cursor:pointer;padding:0;margin-bottom:8px;font-family:inherit;transition:color .12s}
+.back-to-list:hover{color:var(--t1)}
+.back-to-list svg{width:12px;height:12px}
+
+/* ════════════════════════════════════════════════════════════════════
+   INLINE-EDIT PAGE HEADER (click-to-edit title + description)
+   ════════════════════════════════════════════════════════════════════ */
+.page-edit{cursor:text;border-radius:6px;padding:2px 6px;margin:-2px -6px;transition:background .12s,box-shadow .12s;outline:none;display:inline-block;max-width:100%;white-space:pre-wrap;word-break:break-word}
+.page-edit:hover{background:rgba(255,255,255,0.04)}
+.page-edit.editing{background:rgba(43,127,255,0.06);box-shadow:0 0 0 1px var(--pri-bd)}
+.page-desc{font-size:13px;color:var(--t2);line-height:1.55;max-width:720px;margin-top:6px;font-weight:400;display:block}
+.page-desc:empty::before{content:attr(data-placeholder);color:var(--t4);font-style:italic;pointer-events:none}
+.page-desc.editing{color:var(--t1)}
+.page-meta{font-size:11px;color:var(--t4);margin-top:8px;font-family:'SF Mono',ui-monospace,monospace;letter-spacing:-.2px}
+.page-meta-sep{margin:0 6px;color:var(--t4);opacity:0.55}
 </style>
 </head>
 <body>
 
-<!-- ── LEFT NAV ── -->
-<nav class="leftnav">
-  <div class="leftnav-logo">AO</div>
-  <div class="nav-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-  </div>
-  <div class="nav-icon active">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-  </div>
-  <div class="nav-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
-  </div>
-  <div class="nav-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-  </div>
-  <div class="nav-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-  </div>
-  <div class="nav-spacer"></div>
-  <div class="nav-bottom">
-    <div class="nav-settings">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>
+<!-- ════════ APP SHELL (ported from agentic-studio) ════════ -->
+<div class="app">
+
+<!-- ─── SIDEBAR ─── -->
+<nav class="sidebar" id="appSidebar" aria-label="Main navigation">
+  <div class="sb-nav">
+
+    <button class="sb-item" onclick="toast('Control Tower')" title="Control Tower" aria-label="Control Tower">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16v-5"/><path d="M6 16h6"/><rect x="6.5" y="8.5" width="5" height="2.5" rx="1"/><path d="M7.5 8.5V7.5M10.5 8.5V7.5"/><path d="M4 5a6 6 0 0110 0"/><path d="M6 6.5a3.5 3.5 0 016 0"/></svg></span>
+      <span class="sb-label">Control Tower</span>
+    </button>
+
+    <div class="sb-divider"></div>
+
+    <button class="sb-item" onclick="toast('Agents')" title="Agents" aria-label="Agents">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="9" cy="6" r="3"/><path d="M3 17c0-3.314 2.686-5 6-5s6 1.686 6 5"/></svg></span>
+      <span class="sb-label">Agents</span>
+    </button>
+
+    <button class="sb-item" onclick="toast('Squads')" title="Squads" aria-label="Squads">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="6.5" cy="5.5" r="2.5"/><circle cx="11.5" cy="5.5" r="2.5"/><path d="M1 16c0-2.5 2.5-4 5.5-4s5.5 1.5 5.5 4"/><path d="M12 12c1.5.3 4 1.2 4 4"/></svg></span>
+      <span class="sb-label">Squads</span>
+    </button>
+
+    <button class="sb-item" onclick="toast('Workflows')" title="Workflows" aria-label="Workflows">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="1.5"/><path d="M5 7.5v1.5A1.5 1.5 0 006.5 10.5H8M10 7.5L9 9l1 1.5"/></svg></span>
+      <span class="sb-label">Workflows</span>
+    </button>
+
+    <a class="sb-item" href="agentic-studio.html" title="Agentic Networks" aria-label="Agentic Networks">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="9" cy="3" r="1.8"/><circle cx="3" cy="15" r="1.8"/><circle cx="15" cy="15" r="1.8"/><path d="M9 4.8L3 13.2M9 4.8L15 13.2M3 13.2h12"/></svg></span>
+      <span class="sb-label">Agentic Networks</span>
+    </a>
+
+    <div class="sb-divider"></div>
+
+    <button class="sb-item active" title="Chat Widget" aria-label="Chat Widget" aria-current="page" onclick="showListView()">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3.5h12a1 1 0 011 1v7a1 1 0 01-1 1h-5l-3 2.5v-2.5H3a1 1 0 01-1-1v-7a1 1 0 011-1z"/><circle cx="6" cy="8" r=".7" fill="currentColor"/><circle cx="9" cy="8" r=".7" fill="currentColor"/><circle cx="12" cy="8" r=".7" fill="currentColor"/></svg></span>
+      <span class="sb-label">Chat Widget</span>
+    </button>
+
+    <div class="sb-divider"></div>
+
+    <button class="sb-item" id="sbPlaybooksBtn" onclick="toggleSbSection('sbPlaybooksSub','sbPlaybooksBtn')" title="Playbooks" aria-label="Playbooks">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2h7.5L14 4.5V16H4V2z"/><path d="M7 7h4M7 10h4M7 13h2"/><path d="M11.5 2v3H14"/></svg></span>
+      <span class="sb-label">Playbooks</span>
+      <svg class="sb-chevron" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l3.5 3.5L10 5"/></svg>
+    </button>
+    <div class="sb-sub" id="sbPlaybooksSub">
+      <button class="sb-sub-item sub-active" onclick="toast('All Playbooks','info')">
+        <span class="sb-sub-dot"></span>
+        <span class="sb-sub-label">All Playbooks</span>
+        <span class="sb-sub-count">5</span>
+      </button>
+      <button class="sb-sub-item" onclick="toast('Sales &amp; GTM','info')">
+        <span class="sb-sub-dot"></span>
+        <span class="sb-sub-label">Sales &amp; GTM</span>
+      </button>
+      <button class="sb-sub-item" onclick="toast('Customer Support','info')">
+        <span class="sb-sub-dot"></span>
+        <span class="sb-sub-label">Customer Support</span>
+      </button>
+      <button class="sb-sub-item" onclick="toast('Finance &amp; Legal','info')">
+        <span class="sb-sub-dot"></span>
+        <span class="sb-sub-label">Finance &amp; Legal</span>
+      </button>
+      <button class="sb-sub-item" onclick="toast('HR &amp; Onboarding','info')">
+        <span class="sb-sub-dot"></span>
+        <span class="sb-sub-label">HR &amp; Onboarding</span>
+      </button>
     </div>
+
+    <div class="sb-divider"></div>
+
+    <button class="sb-item" onclick="toast('Admin')" title="Admin" aria-label="Admin">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M9 2l1.5 4h4l-3.5 2.5 1.5 4L9 10l-3.5 2.5 1.5-4L3.5 6h4z"/></svg></span>
+      <span class="sb-label">Admin</span>
+      <svg class="sb-chevron" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l3.5 3.5L10 5"/></svg>
+    </button>
+  </div>
+
+  <div class="sb-bottom">
+    <button class="sb-toggle" id="sbToggleBtn" onclick="sbToggle()" title="Toggle sidebar" aria-label="Toggle sidebar" aria-expanded="false">
+      <svg class="sb-toggle-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4L6 9l5 5"/>
+        <line x1="3" y1="3" x2="3" y2="15"/>
+      </svg>
+      <span class="sb-toggle-label">Collapse</span>
+    </button>
   </div>
 </nav>
 
-<!-- ── MAIN VIEW ── -->
-<div id="view-main" class="view active">
+<!-- ── LIST VIEW (default landing) ── -->
+<div id="view-list" class="view active">
+  <div class="main">
+    <div class="list-scroll">
+      <div class="list-hd">
+        <div>
+          <div class="list-title">Chat Widgets</div>
+          <div class="list-sub">Embeddable AI chat widgets connected to your Agentic Workflows</div>
+        </div>
+        <button class="btn-create" onclick="openNewWidget()">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          New Widget
+        </button>
+      </div>
+      <div class="list-filters">
+        <div class="list-filter-wrap">
+          <svg class="list-filter-wrap-ic" width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5L12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <input id="wgtSearch" placeholder="Search widgets…" oninput="filterWidgets(this.value)" />
+        </div>
+        <div class="list-chips" id="wgtChips"></div>
+        <button class="list-sort" onclick="toast('Sort options','info')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4h8M3.5 7h5M5 10h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Sort: Last updated
+        </button>
+      </div>
+      <div class="wgt-list" id="wgtList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DETAIL VIEW (overview of a single widget) ── -->
+<div id="view-main" class="view">
 
   <!-- Main column -->
   <div class="main">
-    <!-- Top bar -->
+    <!-- Top bar (ported from agentic-studio) -->
     <div class="topbar">
-      <div class="topbar-left">
-        <div class="brand">
-          <div class="brand-logo">AO</div>
-          AIMS-OS
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="breadcrumb">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-          <span class="bc-item">AIMS-OS Platform</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-          <span class="bc-item">Chat Widget</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-          <span class="bc-current">Main Website</span>
-        </div>
-      </div>
-      <div class="topbar-center">
-        <div class="search-box">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <span>Search in AIMS-OS Platform…</span>
-          <div class="search-kbd">⌘K</div>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button class="create-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Create
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      <div class="tb-left">
+        <button class="tb-launcher" id="studioLauncher" onclick="toggleStudioSw(event)" aria-label="Switch studio" aria-haspopup="true">
+          <div class="tb-launcher-logo">AS</div>
+          <span class="tb-launcher-name">AIMS OS</span>
+          <svg class="tb-launcher-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="studio-sw" id="studioSw" role="menu">
+            <div class="studio-sw-hd"><span class="studio-sw-title">Switch Studio</span></div>
+            <a class="studio-item" href="agentic-studio.html" role="menuitem">
+              <div class="studio-item-ico" style="background:var(--grad)">AS</div>
+              <div class="studio-item-info">
+                <div class="studio-item-name">Agentic Studio</div>
+                <div class="studio-item-desc">Agents &amp; workflows</div>
+              </div>
+            </a>
+            <a class="studio-item" href="governance-studio.html" role="menuitem">
+              <div class="studio-item-ico" style="background:linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%)">GS</div>
+              <div class="studio-item-info">
+                <div class="studio-item-name">Governance Studio</div>
+                <div class="studio-item-desc">Policies &amp; knowledge</div>
+              </div>
+            </a>
+            <a class="studio-item s-active" href="chat-widget.html" role="menuitem">
+              <div class="studio-item-ico" style="background:linear-gradient(135deg,#0EA5E9 0%,#06B6D4 100%)">CW</div>
+              <div class="studio-item-info">
+                <div class="studio-item-name">Chat Widget</div>
+                <div class="studio-item-desc">Web chat builder</div>
+              </div>
+              <svg class="studio-item-badge" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3.5 8l3.5 3.5 5.5-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
         </button>
-        <div class="icon-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        </div>
-        <div class="icon-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <div class="icon-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-        </div>
-        <div class="avatar-btn">TH</div>
+      </div>
+      <div class="tb-search">
+        <svg class="tb-search-ic" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5L12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <input placeholder="Search in AIMS-OS Platform..." />
+      </div>
+      <div class="tb-right">
+        <button class="icon-btn" title="Notifications"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a4 4 0 014 4c0 3 1 4 1 4H3s1-1 1-4a4 4 0 014-4zM6.5 12.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" title="Activity"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 6v2l1.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" title="Settings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
+        <div class="avatar-sm">TH</div>
       </div>
     </div>
 
@@ -637,23 +1195,25 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
       <!-- Page header -->
       <div class="page-header">
         <div>
+          <button class="back-to-list" onclick="showListView()">
+            <svg viewBox="0 0 12 12" fill="none"><polyline points="7.5 2.5 4 6 7.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Chat Widgets
+          </button>
           <div class="page-title-row">
-            <div class="page-title">Main Website</div>
+            <div class="page-title page-edit" id="pageTitleEdit" data-edit-single title="Click to edit name">Main Website</div>
             <div class="badge-active"><span class="badge-active-dot"></span>Active</div>
           </div>
-          <div class="page-sub">acme.com · Widget ID: wgt_Xk9mN2pL3qR7</div>
+          <div class="page-desc page-edit" id="pageDescEdit" data-edit-multi data-placeholder="Add description…" title="Click to edit description">Customer-facing support and lead qualification widget embedded on acme.com. Handles inbound questions, qualifies leads, and routes to the right SDR or support queue.</div>
         </div>
         <div class="page-actions">
           <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.32);padding:0 4px">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="20 6 9 17 4 12"/></svg>
             Autosaved
           </span>
-          <button class="btn btn-ghost">Discard</button>
-          <button class="btn btn-primary">
+          <button class="btn btn-primary" onclick="openPub()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2"/></svg>
             Publish
           </button>
-          <button class="btn btn-dots">···</button>
         </div>
       </div>
 
@@ -672,131 +1232,160 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
         <!-- ── OVERVIEW ── -->
         <div id="tab-overview" class="tab-panel active">
 
-          <!-- Editable name & description -->
-          <div class="editable-field">
-            <div class="field-label-row">
-              <div class="field-label">Widget Name</div>
-            </div>
-            <input class="field-input" value="Main Website" />
-          </div>
-          <div class="editable-field" style="margin-bottom:24px">
-            <div class="field-label-row">
-              <div class="field-label">Description</div>
-            </div>
-            <textarea class="field-input field-textarea" placeholder="Describe what this widget does, who uses it, and when it's triggered…">Customer-facing support and lead qualification widget embedded on acme.com. Handles inbound questions, qualifies leads, and routes to the right SDR or support queue.</textarea>
-          </div>
+          <!-- (Widget Name + Description moved to page header — click-to-edit) -->
 
-          <!-- Metrics -->
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon" style="background:rgba(37,99,235,0.12)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              </div>
-              <div class="metric-value">94.2%</div>
-              <div class="metric-label">Success Rate</div>
-              <div class="metric-change mc-up">+2.1%</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon" style="background:rgba(16,185,129,0.1)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              </div>
-              <div class="metric-value">78.5%</div>
-              <div class="metric-label">Autonomous Resolution</div>
-              <div class="metric-change mc-up">+5.3%</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon" style="background:rgba(245,158,11,0.1)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              </div>
-              <div class="metric-value">$0.08</div>
-              <div class="metric-label">Cost per Execution</div>
-              <div class="metric-change mc-neutral">No change</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon" style="background:rgba(99,102,241,0.1)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              </div>
-              <div class="metric-value">1,240</div>
-              <div class="metric-label">Executions</div>
-              <div class="metric-change mc-up">+142 this month</div>
-            </div>
-          </div>
+          <!-- ═══ DRAGGABLE WIDGET GRID (overview) ═══ -->
+          <div class="ov-widget-grid" id="ovWidgetGrid">
 
-          <!-- Widget Info -->
-          <div class="section-label">Widget Info</div>
-          <div class="info-grid">
-            <div class="info-row">
-              <div class="info-cell">
-                <div class="info-cell-label">Widget ID</div>
-                <div class="info-cell-value">wgt_Xk9mN2pL3qR7</div>
+            <!-- Widget 1 — Metrics (list-card pattern) -->
+            <div class="ov-widget" data-pos="1">
+              <div class="ov-card">
+                <div class="ov-card-hd">
+                  <button class="ov-drag-grip" title="Drag to rearrange" aria-label="Drag to rearrange">
+                    <svg width="10" height="14" viewBox="0 0 10 14" fill="none"><circle cx="3" cy="2.5" r="1.2" fill="currentColor"/><circle cx="7" cy="2.5" r="1.2" fill="currentColor"/><circle cx="3" cy="7" r="1.2" fill="currentColor"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/><circle cx="3" cy="11.5" r="1.2" fill="currentColor"/><circle cx="7" cy="11.5" r="1.2" fill="currentColor"/></svg>
+                  </button>
+                  <span class="ov-card-title">
+                    <svg viewBox="0 0 16 16" fill="none"><polyline points="14 9 11 9 9 14 6 2 4 9 1 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Metrics
+                  </span>
+                  <button class="ds-card-act" title="Pin" onclick="toast('Metrics pinned','info')" aria-label="Pin">
+                    <svg viewBox="0 0 16 16" fill="none"><path d="M9.5 1.5L14.5 6.5l-3.5 1L7 11.5 4.5 9 1.5 12V14.5H4l3-3L9.5 14l4-4 1-3.5L14.5 6.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="ds-card-act danger" title="Remove" onclick="toast('Card removed','default')" aria-label="Remove">
+                    <svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2.5h4V4M5 4l.7 9.5h4.6L11 4M7 6.5v5M9 6.5v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
+                <div class="ds-rows">
+                  <button class="ds-row" onclick="toast('Success Rate trend','info')">
+                    <span class="ds-row-ico tone-pri"><svg viewBox="0 0 16 16" fill="none"><polyline points="14 9 11 9 9 14 6 2 4 9 1 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">94.2%</span><span class="ds-row-sub">Success Rate</span></span>
+                    <span class="ds-row-meta" style="color:var(--ok)">+2.1%</span>
+                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="ds-row" onclick="toast('Autonomous trend','info')">
+                    <span class="ds-row-ico tone-ok"><svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5l5.5 2.5v4c0 3-2.5 5.5-5.5 6-3-.5-5.5-3-5.5-6V4L8 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">78.5%</span><span class="ds-row-sub">Autonomous Resolution</span></span>
+                    <span class="ds-row-meta" style="color:var(--ok)">+5.3%</span>
+                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="ds-row" onclick="toast('Cost trend','info')">
+                    <span class="ds-row-ico tone-warn"><svg viewBox="0 0 16 16" fill="none"><line x1="8" y1="1.5" x2="8" y2="14.5" stroke="currentColor" stroke-width="1.3"/><path d="M11 4H6.5a2 2 0 000 4h3a2 2 0 010 4H4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">$0.08</span><span class="ds-row-sub">Cost per Execution</span></span>
+                    <span class="ds-row-meta">No change</span>
+                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="ds-row" onclick="toast('Executions trend','info')">
+                    <span class="ds-row-ico tone-pur"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><polyline points="8 4 8 8 11 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">1,240</span><span class="ds-row-sub">Executions</span></span>
+                    <span class="ds-row-meta" style="color:var(--ok)">+142 this month</span>
+                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
               </div>
-              <div class="info-cell">
-                <div class="info-cell-label">Version</div>
-                <div class="info-cell-value">v2.4.1</div>
+              <div class="ov-resize-hdl" title="Drag to resize">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M8 2v6M2 8h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M4.5 8h3.5V4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
             </div>
-            <div class="info-row">
-              <div class="info-cell">
-                <div class="info-cell-label">Trusted Domains</div>
-                <div class="info-cell-value">3 configured</div>
-              </div>
-              <div class="info-cell">
-                <div class="info-cell-label">Created</div>
-                <div class="info-cell-value">Mar 14, 2025</div>
-              </div>
-            </div>
-          </div>
 
-          <!-- Assigned Agentic Network -->
-          <div class="section-label">Assigned Agentic Network</div>
-          <div class="assigned-card">
-            <div class="assigned-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
-            </div>
-            <div class="assigned-body">
-              <div class="assigned-name">
-                Sales AI
-                <span class="assigned-badge">Agentic Network</span>
+            <!-- Widget 2 — Widget Info (list-card pattern) -->
+            <div class="ov-widget" data-pos="2">
+              <div class="ov-card">
+                <div class="ov-card-hd">
+                  <button class="ov-drag-grip" title="Drag to rearrange" aria-label="Drag to rearrange">
+                    <svg width="10" height="14" viewBox="0 0 10 14" fill="none"><circle cx="3" cy="2.5" r="1.2" fill="currentColor"/><circle cx="7" cy="2.5" r="1.2" fill="currentColor"/><circle cx="3" cy="7" r="1.2" fill="currentColor"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/><circle cx="3" cy="11.5" r="1.2" fill="currentColor"/><circle cx="7" cy="11.5" r="1.2" fill="currentColor"/></svg>
+                  </button>
+                  <span class="ov-card-title">
+                    <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 7v4M8 5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                    Widget Info
+                  </span>
+                  <button class="ds-card-act" title="Pin" onclick="toast('Widget Info pinned','info')" aria-label="Pin">
+                    <svg viewBox="0 0 16 16" fill="none"><path d="M9.5 1.5L14.5 6.5l-3.5 1L7 11.5 4.5 9 1.5 12V14.5H4l3-3L9.5 14l4-4 1-3.5L14.5 6.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="ds-card-act danger" title="Remove" onclick="toast('Card removed','default')" aria-label="Remove">
+                    <svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2.5h4V4M5 4l.7 9.5h4.6L11 4M7 6.5v5M9 6.5v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
+                <div class="ds-rows">
+                  <button class="ds-row" onclick="toast('Owner profile','info')">
+                    <span class="ds-row-ico" style="background:linear-gradient(135deg,#155DFC,#00C2C2);color:#fff;font-size:9px;font-weight:700;letter-spacing:-.2px">TH</span>
+                    <span class="ds-row-body"><span class="ds-row-title">Thomas González</span><span class="ds-row-sub">Owner</span></span>
+                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="ds-row" onclick="toast('Version history','info')">
+                    <span class="ds-row-ico tone-pri"><svg viewBox="0 0 16 16" fill="none"><path d="M2 4l6-2.5L14 4v8L8 14.5 2 12V4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M2 4l6 2.5L14 4M8 6.5V14.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">v2.4.1</span><span class="ds-row-sub">Version</span></span>
+                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="ds-row" onclick="goTo('embed')">
+                    <span class="ds-row-ico tone-ok"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M2 8h12M8 2c2 1.8 2 10.2 0 12M8 2c-2 1.8-2 10.2 0 12" stroke="currentColor" stroke-width="1.2"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">3 configured</span><span class="ds-row-sub">Trusted Domains</span></span>
+                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="ds-row" onclick="toast('Creation details','info')">
+                    <span class="ds-row-ico"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 6h12M5 1.5v3M11 1.5v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">Mar 14, 2025</span><span class="ds-row-sub">Created</span></span>
+                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
               </div>
-              <div class="assigned-desc">Lead qualification &amp; vehicle recommendations</div>
-              <div class="assigned-metrics">
-                <div class="assigned-metric">
-                  <div class="am-label">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    Success Rate
-                  </div>
-                  <div class="am-value">94.2%</div>
-                </div>
-                <div class="assigned-metric">
-                  <div class="am-label">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    Avg. Response
-                  </div>
-                  <div class="am-value">&lt;1s</div>
-                </div>
-                <div class="assigned-metric">
-                  <div class="am-label">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    Autonomous
-                  </div>
-                  <div class="am-value">78.5%</div>
-                </div>
-                <div class="assigned-metric">
-                  <div class="am-label">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    Cost / Run
-                  </div>
-                  <div class="am-value">$0.08</div>
-                </div>
-              </div>
-              <div class="view-link" onclick="goTo('agent')">
-                View in Agentic Studio
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              <div class="ov-resize-hdl" title="Drag to resize">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M8 2v6M2 8h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M4.5 8h3.5V4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
             </div>
-            <div class="assigned-status"><span class="assigned-status-dot"></span>Active</div>
-          </div>
-        </div>
+
+            <!-- Widget 3 — Assigned Agentic Network (list-card pattern, right column, spans 2 rows) -->
+            <div class="ov-widget" data-pos="3">
+              <div class="ov-card">
+                <div class="ov-card-hd">
+                  <button class="ov-drag-grip" title="Drag to rearrange" aria-label="Drag to rearrange">
+                    <svg width="10" height="14" viewBox="0 0 10 14" fill="none"><circle cx="3" cy="2.5" r="1.2" fill="currentColor"/><circle cx="7" cy="2.5" r="1.2" fill="currentColor"/><circle cx="3" cy="7" r="1.2" fill="currentColor"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/><circle cx="3" cy="11.5" r="1.2" fill="currentColor"/><circle cx="7" cy="11.5" r="1.2" fill="currentColor"/></svg>
+                  </button>
+                  <span class="ov-card-title">
+                    <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M7 5L4 11M9 5L12 11M4.5 12.5h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    Assigned Agentic Network
+                  </span>
+                  <button class="ds-card-act" title="Pin" onclick="toast('Network pinned','info')" aria-label="Pin">
+                    <svg viewBox="0 0 16 16" fill="none"><path d="M9.5 1.5L14.5 6.5l-3.5 1L7 11.5 4.5 9 1.5 12V14.5H4l3-3L9.5 14l4-4 1-3.5L14.5 6.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="ds-card-act danger" title="Remove" onclick="toast('Card removed','default')" aria-label="Remove">
+                    <svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2.5h4V4M5 4l.7 9.5h4.6L11 4M7 6.5v5M9 6.5v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
+                <div class="ds-rows">
+                  <button class="ds-row" onclick="goTo('agent')">
+                    <span class="ds-row-ico tone-pur"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M7 5L4 11M9 5L12 11M4.5 12.5h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">Sales AI</span><span class="ds-row-sub">Lead qualification &amp; vehicle recommendations</span></span>
+                    <span class="ds-row-meta" style="color:var(--ok);font-family:inherit;font-weight:600;letter-spacing:0">● Active</span>
+                  </button>
+                  <button class="ds-row" onclick="toast('Success Rate','info')">
+                    <span class="ds-row-ico"><svg viewBox="0 0 16 16" fill="none"><polygon points="8 1.5 9.7 5.6 14 6.2 11 9.2 11.7 13.5 8 11.5 4.3 13.5 5 9.2 2 6.2 6.3 5.6" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">94.2%</span><span class="ds-row-sub">Success Rate</span></span>
+                  </button>
+                  <button class="ds-row" onclick="toast('Avg. Response','info')">
+                    <span class="ds-row-ico"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><polyline points="8 4 8 8 11 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">&lt;1s</span><span class="ds-row-sub">Avg. Response</span></span>
+                  </button>
+                  <button class="ds-row" onclick="toast('Autonomous','info')">
+                    <span class="ds-row-ico"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 3h11a1 1 0 011 1v6a1 1 0 01-1 1H9l-3 2.5V11H2.5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">78.5%</span><span class="ds-row-sub">Autonomous Resolution</span></span>
+                  </button>
+                  <button class="ds-row" onclick="toast('Cost / Run','info')">
+                    <span class="ds-row-ico"><svg viewBox="0 0 16 16" fill="none"><line x1="8" y1="1.5" x2="8" y2="14.5" stroke="currentColor" stroke-width="1.3"/><path d="M11 4H6.5a2 2 0 000 4h3a2 2 0 010 4H4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+                    <span class="ds-row-body"><span class="ds-row-title">$0.08</span><span class="ds-row-sub">Cost / Run</span></span>
+                  </button>
+                </div>
+                <div class="ds-card-ft">
+                  <span>Live · synced 2m ago</span>
+                  <button class="ds-card-ft-link" onclick="goTo('agent')">View in Agentic Studio <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                </div>
+              </div><!-- /ov-card (widget 3) -->
+              <div class="ov-resize-hdl" title="Drag to resize">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M8 2v6M2 8h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M4.5 8h3.5V4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div><!-- /ov-widget pos=3 -->
+
+          </div><!-- /ov-widget-grid -->
+        </div><!-- /tab-overview -->
 
         <!-- ── APPEARANCE ── -->
         <div id="tab-appearance" class="tab-panel">
@@ -1243,11 +1832,14 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
   </div><!-- /main -->
 
   <!-- ── RIGHT PANEL (Widget Simulator) ── -->
-  <div class="right-panel">
-
+  <div class="right-panel" id="rightPanel" onclick="rpExpandFromRail(event)">
     <!-- Header -->
     <div class="rp-header">
+      <button class="rp-toggle" id="rpToggleBtn" onclick="rpToggle(event)" title="Collapse preview" aria-label="Collapse preview" aria-expanded="true">
+        <svg viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <span class="rp-title">Widget Preview</span>
+      <span class="rp-rail-label">Widget Preview</span>
       <span class="rp-ext" title="Open in new tab">↗</span>
     </div>
 
@@ -1352,24 +1944,22 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
 
 <!-- ── CREATE VIEW ── -->
 <div id="view-create" class="view">
-  <div class="topbar" style="border-bottom:1px solid rgba(255,255,255,0.07)">
-    <div class="topbar-left">
-      <div class="brand">
-        <div class="brand-logo">AO</div>
-        AIMS-OS
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <button class="tb-launcher" aria-label="Back" onclick="showMainView()">
+          <div class="tb-launcher-logo">AS</div>
+          <span class="tb-launcher-name">AIMS OS</span>
+        </button>
       </div>
-      <div class="breadcrumb">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        <span class="bc-item" onclick="showMainView()" style="cursor:pointer">Chat Widget</span>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        <span class="bc-current">New Agentic Network</span>
+      <div class="tb-search">
+        <svg class="tb-search-ic" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5L12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <input placeholder="Search in AIMS-OS Platform..." />
+      </div>
+      <div class="tb-right">
+        <div class="avatar-sm">TH</div>
       </div>
     </div>
-    <div class="topbar-right">
-      <div class="avatar-btn">TH</div>
-    </div>
-  </div>
   <div class="create-page">
     <div class="create-card">
       <div style="margin-bottom:20px">
@@ -1389,7 +1979,217 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
       </button>
     </div>
   </div>
+  </div><!-- /main (view-create) -->
+</div><!-- /view-create -->
+
+</div><!-- /app -->
+
+<!-- ════════ PUBLISH SIMULATION MODAL ════════ -->
+<div id="pubOverlay" class="pub-overlay" onclick="closePub()">
+  <div class="pub-modal" onclick="event.stopPropagation()" role="dialog" aria-labelledby="pubTitle">
+    <div class="pub-hd">
+      <div class="pub-hd-title">
+        <div class="pub-hd-ico" id="pubHdIco">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2"/></svg>
+        </div>
+        <span id="pubTitle">Publish widget</span>
+      </div>
+      <button class="pub-close" onclick="closePub()" aria-label="Close">×</button>
+    </div>
+
+    <!-- ── STATE 1: CONFIRM ── -->
+    <div class="pub-body" id="pubStateConfirm">
+      <div class="pub-section-title">Summary</div>
+      <div class="pub-summary-card">
+        <div class="pub-summary-ico" style="background:rgba(6,182,212,0.15);color:#06B6D4">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 3h11a1 1 0 011 1v6a1 1 0 01-1 1H9l-3 2.5V11H2.5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="6" cy="7" r=".7" fill="currentColor"/><circle cx="8" cy="7" r=".7" fill="currentColor"/><circle cx="10" cy="7" r=".7" fill="currentColor"/></svg>
+        </div>
+        <div class="pub-summary-text">
+          <div class="pub-summary-label">Widget</div>
+          <div class="pub-summary-value">Main Website <span class="pub-version-bump">v2.4.1 → v2.4.2</span></div>
+        </div>
+      </div>
+      <div class="pub-summary-card">
+        <div class="pub-summary-ico" style="background:rgba(43,127,255,0.15);color:var(--pri)">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M2 8h12M8 2c2 1.8 2 10.2 0 12M8 2c-2 1.8-2 10.2 0 12" stroke="currentColor" stroke-width="1.2"/></svg>
+        </div>
+        <div class="pub-summary-text">
+          <div class="pub-summary-label">Target domains</div>
+          <div class="pub-summary-value">acme.com · help.acme.com · app.acme.com</div>
+        </div>
+      </div>
+      <div class="pub-summary-card">
+        <div class="pub-summary-ico" style="background:rgba(167,139,250,0.15);color:var(--pur)">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M7 5L4 11M9 5L12 11M4.5 12.5h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pub-summary-text">
+          <div class="pub-summary-label">Agentic Network</div>
+          <div class="pub-summary-value">Sales AI</div>
+        </div>
+      </div>
+      <p class="pub-disclaimer">Once published, v2.4.2 replaces v2.4.1 across all 3 trusted domains. In-progress chat sessions continue uninterrupted.</p>
+    </div>
+
+    <!-- ── STATE 2: PROGRESS (hidden) ── -->
+    <div class="pub-body" id="pubStateProgress" style="display:none">
+      <div class="pub-section-title">Deploying widget</div>
+      <div class="pub-progress-list" id="pubSteps">
+        <div class="pub-step" data-step="1">
+          <div class="pub-step-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" fill="currentColor"/></svg></div>
+          <span class="pub-step-text">Validating configuration</span>
+          <span class="pub-step-time"></span>
+        </div>
+        <div class="pub-step" data-step="2">
+          <div class="pub-step-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" fill="currentColor"/></svg></div>
+          <span class="pub-step-text">Building widget bundle</span>
+          <span class="pub-step-time"></span>
+        </div>
+        <div class="pub-step" data-step="3">
+          <div class="pub-step-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" fill="currentColor"/></svg></div>
+          <span class="pub-step-text">Deploying to CDN edge nodes</span>
+          <span class="pub-step-time"></span>
+        </div>
+        <div class="pub-step" data-step="4">
+          <div class="pub-step-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" fill="currentColor"/></svg></div>
+          <span class="pub-step-text">Activating on 3 domains</span>
+          <span class="pub-step-time"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STATE 3: SUCCESS (hidden) ── -->
+    <div class="pub-body" id="pubStateSuccess" style="display:none">
+      <div class="pub-success">
+        <div class="pub-success-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 12 10 16 18 8"/></svg>
+        </div>
+        <div class="pub-success-title">Widget is live!</div>
+        <div class="pub-success-sub">Main Website v2.4.2 deployed across 3 domains</div>
+      </div>
+      <div class="pub-section-title" style="margin-top:18px">Embed snippet</div>
+      <div class="pub-snippet-wrap">
+        <div class="pub-snippet" id="pubSnippet"><span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"https://cdn.aimsos.ai/w/wgt_Xk9mN2pL3qR7.js"</span> <span class="tk-attr">async</span><span class="tk-tag">&gt;&lt;/script&gt;</span></div>
+        <button class="pub-copy" onclick="copyPubSnippet()" title="Copy snippet" aria-label="Copy snippet">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2H3.5A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── FOOTER (state-driven) ── -->
+    <div class="pub-ft" id="pubFt">
+      <button class="btn btn-ghost" onclick="closePub()">Cancel</button>
+      <button class="btn btn-primary" onclick="runPublish()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2"/></svg>
+        Publish to production
+      </button>
+    </div>
+  </div>
 </div>
+
+<!-- ════════ CREATE-WIDGET MODAL ════════ -->
+<div id="nwOverlay" class="pub-overlay" onclick="closeNewWidget()">
+  <div class="pub-modal" onclick="event.stopPropagation()" role="dialog" aria-labelledby="nwTitle">
+    <div class="pub-hd">
+      <div class="pub-hd-title">
+        <div class="pub-hd-ico">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 3h11a1 1 0 011 1v6a1 1 0 01-1 1H9l-3 2.5V11H2.5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="6" cy="7" r=".7" fill="currentColor"/><circle cx="8" cy="7" r=".7" fill="currentColor"/><circle cx="10" cy="7" r=".7" fill="currentColor"/></svg>
+        </div>
+        <span id="nwTitle">Create chat widget</span>
+      </div>
+      <button class="pub-close" onclick="closeNewWidget()" aria-label="Close">×</button>
+    </div>
+
+    <div class="pub-body" id="nwBody">
+
+      <!-- ── BASICS ── -->
+      <div class="nw-section">
+        <div class="nw-section-hd">
+          <span class="nw-section-title">Basics</span>
+          <span class="nw-section-meta req">Required</span>
+        </div>
+        <div class="nw-field">
+          <label class="nw-label" for="nwName">Widget name <span class="nw-req" aria-hidden="true">*</span></label>
+          <input id="nwName" class="nw-input" placeholder="e.g. Marketing Site" autocomplete="off" oninput="nwUpdate()" />
+          <div class="nw-help">Visible to your team in the widgets list.</div>
+        </div>
+        <div class="nw-field">
+          <label class="nw-label" for="nwDesc">Description</label>
+          <textarea id="nwDesc" class="nw-textarea" placeholder="What does this widget do, who uses it, and where is it embedded?" oninput="nwUpdate()"></textarea>
+        </div>
+      </div>
+
+      <!-- ── AGENT ── -->
+      <div class="nw-section">
+        <div class="nw-section-hd">
+          <span class="nw-section-title">Agentic network</span>
+          <span class="nw-section-meta">Optional</span>
+        </div>
+        <div class="nw-radio-group" role="radiogroup" aria-label="Agentic network">
+          <button type="button" class="nw-radio tone-pur selected" data-agent="Sales AI" onclick="nwSelectAgent('Sales AI')" role="radio" aria-checked="true">
+            <span class="nw-radio-dot" aria-hidden="true"></span>
+            <span class="nw-radio-ico"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M7 5L4 11M9 5L12 11M4.5 12.5h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+            <span class="nw-radio-body">
+              <span class="nw-radio-name">Sales AI</span>
+              <span class="nw-radio-sub">Lead qualification &amp; vehicle recommendations</span>
+            </span>
+          </button>
+          <button type="button" class="nw-radio tone-pri" data-agent="Support AI" onclick="nwSelectAgent('Support AI')" role="radio" aria-checked="false">
+            <span class="nw-radio-dot" aria-hidden="true"></span>
+            <span class="nw-radio-ico"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M7 5L4 11M9 5L12 11M4.5 12.5h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+            <span class="nw-radio-body">
+              <span class="nw-radio-name">Support AI</span>
+              <span class="nw-radio-sub">Ticket triage &amp; FAQ</span>
+            </span>
+          </button>
+          <button type="button" class="nw-radio" data-agent="" onclick="nwSelectAgent('')" role="radio" aria-checked="false">
+            <span class="nw-radio-dot" aria-hidden="true"></span>
+            <span class="nw-radio-ico"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+            <span class="nw-radio-body">
+              <span class="nw-radio-name">No agent yet</span>
+              <span class="nw-radio-sub">Save as draft — assign an agent later</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── DOMAINS ── -->
+      <div class="nw-section">
+        <div class="nw-section-hd">
+          <span class="nw-section-title">Trusted domains</span>
+          <span class="nw-section-meta">Optional</span>
+        </div>
+        <div class="nw-domain-input-row">
+          <input id="nwDomainInput" class="nw-input" placeholder="example.com" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();nwAddDomain()}" oninput="nwUpdateDomainBtn()" />
+          <button type="button" class="nw-add-btn" id="nwAddDomainBtn" onclick="nwAddDomain()" disabled>
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            Add
+          </button>
+        </div>
+        <div class="nw-domain-list" id="nwDomainList" role="list" aria-label="Trusted domains"></div>
+        <div class="nw-help">The widget will only render on these domains.</div>
+      </div>
+
+      <!-- ── STATUS PREVIEW ── -->
+      <div class="nw-status-preview draft" id="nwStatusPreview">
+        <div class="nw-status-ico" id="nwStatusIco">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 2h7.5L13 4.5V14H3V2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M10.5 2v3H13" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="nw-status-text" id="nwStatusText">Will be saved as <strong>Draft</strong> — add a domain to activate.</div>
+      </div>
+
+    </div>
+
+    <div class="pub-ft">
+      <button type="button" class="btn btn-ghost" onclick="closeNewWidget()">Cancel</button>
+      <button type="button" class="btn btn-primary" id="nwCreateBtn" onclick="createWidget()" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span id="nwCreateLabel">Create widget</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toastCtr" class="toast-ctr"></div>
 
 <script>
   // ── Tab switching ──
@@ -1684,7 +2484,577 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
 
   function showMainView() {
     document.getElementById('view-create').classList.remove('active');
+    document.getElementById('view-list')?.classList.remove('active');
     document.getElementById('view-main').classList.add('active');
+  }
+  function showListView() {
+    document.getElementById('view-main').classList.remove('active');
+    document.getElementById('view-create').classList.remove('active');
+    document.getElementById('view-list').classList.add('active');
+  }
+  function openWidget(id) {
+    // For prototype: all widget cards open the same Detail view
+    showMainView();
+  }
+
+  /* ── Widget list data + render (mirrors agentic-studio's renderList) ── */
+  const WIDGETS = [
+    {
+      id:'main', name:'Main Website', status:'active', ago:'Updated 2h ago',
+      iconKind:'web',
+      domain:'acme.com', domainLabel:'3 approved domains',
+      agent:'Sales AI', desc:'lead qualification & vehicle recommendations',
+      aiSummary:'Widget performing well — 1,247 conversations this month. Satisfaction up 2% vs last month. Peak activity weekdays 10:00–14:00. Human in the Loop was triggered 14 times; avg. handoff response time 4 min.',
+      chats:1247, successRate:96, avgResp:'<1s', hitl:14,
+      cat:'Web'
+    },
+    {
+      id:'support', name:'Support Portal', status:'inactive', ago:'Updated 3d ago',
+      iconKind:'web',
+      domain:'support.acme.com', domainLabel:'1 approved domain',
+      agent:'Support AI', desc:'ticket triage & FAQ',
+      aiSummary:null,
+      chats:342, successRate:88, avgResp:null, hitl:3,
+      cat:'Web'
+    },
+    {
+      id:'blog', name:'Blog', status:'draft', ago:'Created today',
+      iconKind:'draft',
+      domain:null, domainLabel:null,
+      agent:null, desc:null,
+      aiSummary:null,
+      chats:0, successRate:null, avgResp:null, hitl:null,
+      incomplete:true,
+      cat:null
+    }
+  ];
+  let _wgtFilter = 'all';
+  let _wgtSearch = '';
+  const _statusLabels = { active:'Active', inactive:'Inactive', draft:'Draft' };
+
+  function _wgtIcon(kind) {
+    if (kind === 'draft') return '<svg viewBox="0 0 16 16" fill="none"><path d="M3 2h7.5L13 4.5V14H3V2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M10.5 2v3H13M5.5 7h5M5.5 10h5M5.5 12.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
+    return '<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 3h11a1 1 0 011 1v6a1 1 0 01-1 1H9l-3 2.5V11H2.5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="6" cy="7" r=".7" fill="currentColor"/><circle cx="8" cy="7" r=".7" fill="currentColor"/><circle cx="10" cy="7" r=".7" fill="currentColor"/></svg>';
+  }
+  function _wgtBuildCard(w) {
+    const iconClass = w.status === 'draft' ? 'draft' : (w.status === 'inactive' ? 'inactive' : '');
+    const cardClass = w.status === 'draft' ? ' draft' : '';
+    const statusBadge = `<span class="wgt-status ${w.status}"><span class="wgt-status-dot"></span>${_statusLabels[w.status]}</span>`;
+
+    let descLine = '';
+    if (w.status === 'draft') {
+      descLine = `<p class="wgt-desc"><span class="dim">No agent assigned · No approved domains added · Widget cannot be activated yet</span></p>`;
+    } else {
+      descLine = `<p class="wgt-desc"><span class="dim">${w.domain} · ${w.domainLabel} · Powered by</span> <span class="agent-name">${w.agent}</span> <span class="dim">— ${w.desc}</span></p>`;
+    }
+
+    let aiBlock = '';
+    if (w.aiSummary) {
+      aiBlock = `<div class="wgt-ai-row">
+        <span class="wgt-ai-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M6 1.5l1.1 2.6L10 5.1 7.4 7 8.5 10 6 8.5 3.5 10l1.1-3L2 5.1l2.9-.9L6 1.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></span>
+        <span class="wgt-ai-label">AI Summary</span>
+        <span class="wgt-ai-text">${w.aiSummary}</span>
+      </div>`;
+    }
+
+    let metaRow = '';
+    if (w.status !== 'draft') {
+      const chatsFmt = w.chats.toLocaleString('en-US');
+      metaRow = `<div class="wgt-meta">
+        <span class="wgt-mi"><svg viewBox="0 0 12 12" fill="none"><path d="M2 3h8a1 1 0 011 1v4a1 1 0 01-1 1H7l-2.5 2V9H2a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg><span class="wgt-mi-strong">${chatsFmt}</span> chats</span>
+        <span class="wgt-mi ok"><svg viewBox="0 0 12 12" fill="none"><polyline points="2 7 5 10 10 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="wgt-mi-strong" style="color:var(--ok)">${w.successRate}%</span></span>
+        ${w.avgResp?`<span class="wgt-mi"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2"/><polyline points="6 4 6 6 8 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>${w.avgResp}</span>`:''}
+        <span class="wgt-mi"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="4.5" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M2 11c0-2 2-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span class="wgt-mi-strong">${w.hitl}</span> HITL</span>
+        <span class="wgt-mi"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="3" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="3" cy="9" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="9" cy="9" r="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.2 4L3.5 7.5M6.8 4L8.5 7.5M3.5 9h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>${w.agent}</span>
+        <span class="wgt-tag">${w.cat}</span>
+      </div>`;
+    }
+
+    let incompleteBlock = '';
+    if (w.incomplete) {
+      incompleteBlock = `<div class="wgt-incomplete">
+        <span class="wgt-incomplete-ic"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6.5v3M8 11.2v.01" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+        <span class="wgt-incomplete-text">This widget is incomplete. To activate it, <span class="wgt-incomplete-link" onclick="event.stopPropagation();toast('Assign agent flow','info')">assign an agent</span> and add at least one approved domain.</span>
+      </div>`;
+    }
+
+    return `<div class="wgt-card${cardClass}" onclick="openWidget('${w.id}')">
+      <div class="wgt-row1">
+        <span class="wgt-icon ${iconClass}">${_wgtIcon(w.iconKind)}</span>
+        <span class="wgt-name">${w.name}</span>
+        ${statusBadge}
+        <span class="wgt-time">${w.ago}</span>
+        <button class="wgt-menu" onclick="event.stopPropagation();toast('Options for ${w.name}','info')" aria-label="More options">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="3" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="11" r="1" fill="currentColor"/></svg>
+        </button>
+      </div>
+      ${descLine}
+      ${aiBlock}
+      ${metaRow}
+      ${incompleteBlock}
+    </div>`;
+  }
+  function _wgtRenderChips() {
+    const counts = { all: WIDGETS.length };
+    WIDGETS.forEach(w => { counts[w.status] = (counts[w.status] || 0) + 1; });
+    const chipDefs = [
+      { key:'all',      label:'All' },
+      { key:'active',   label:'Active' },
+      { key:'inactive', label:'Inactive' },
+      { key:'draft',    label:'Draft' }
+    ];
+    document.getElementById('wgtChips').innerHTML = chipDefs.map(c => {
+      const n = counts[c.key] || 0;
+      return `<button class="list-chip${_wgtFilter===c.key?' active':''}" onclick="setWgtFilter('${c.key}')">${c.label}<span class="list-chip-count">${n}</span></button>`;
+    }).join('');
+  }
+  function renderWidgetList() {
+    _wgtRenderChips();
+    const list = document.getElementById('wgtList');
+    if (!list) return;
+    const filtered = WIDGETS.filter(w => {
+      const matchFilter = _wgtFilter === 'all' || w.status === _wgtFilter;
+      const q = _wgtSearch.toLowerCase();
+      const matchSearch = !q || w.name.toLowerCase().includes(q) || (w.agent && w.agent.toLowerCase().includes(q)) || (w.domain && w.domain.toLowerCase().includes(q));
+      return matchFilter && matchSearch;
+    });
+    list.innerHTML = filtered.length ? filtered.map(_wgtBuildCard).join('') : '<div class="wgt-empty">No widgets match your filters.</div>';
+  }
+  function setWgtFilter(key) { _wgtFilter = key; renderWidgetList(); }
+  function filterWidgets(v) { _wgtSearch = v; renderWidgetList(); }
+  document.addEventListener('DOMContentLoaded', renderWidgetList);
+
+  /* ── Sidebar collapse / expand (ported from agentic-studio) ── */
+  function sbToggle() {
+    const sb = document.getElementById('appSidebar');
+    const btn = document.getElementById('sbToggleBtn');
+    const expanded = sb.classList.toggle('sb-expanded');
+    btn.setAttribute('aria-expanded', expanded);
+    btn.querySelector('.sb-toggle-label').textContent = expanded ? 'Collapse' : 'Expand';
+    try { localStorage.setItem('sb_expanded', expanded ? '1' : '0'); } catch(e) {}
+  }
+  function sbInit() {
+    try {
+      const stored = localStorage.getItem('sb_expanded');
+      if (stored === '1') {
+        const sb = document.getElementById('appSidebar');
+        const btn = document.getElementById('sbToggleBtn');
+        if (sb) {
+          sb.classList.add('sb-expanded');
+          if (btn) { btn.setAttribute('aria-expanded','true'); btn.querySelector('.sb-toggle-label').textContent='Collapse'; }
+        }
+      }
+    } catch(e) {}
+  }
+  document.addEventListener('DOMContentLoaded', sbInit);
+
+  /* ── Overview widget drag-to-rearrange + resize (ported from agentic-studio) ── */
+  let _ovDragSrc = null;
+  function initOvWidgets() {
+    const grid = document.getElementById('ovWidgetGrid');
+    if (!grid) return;
+    grid.querySelectorAll('.ov-widget').forEach(widget => {
+      const grip = widget.querySelector('.ov-drag-grip');
+      if (!grip) return;
+      grip.addEventListener('mousedown', () => widget.setAttribute('draggable','true'));
+      widget.addEventListener('mouseup', () => widget.setAttribute('draggable','false'));
+      widget.addEventListener('dragstart', e => {
+        _ovDragSrc = widget;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', widget.getAttribute('data-pos') || '');
+        setTimeout(() => widget.classList.add('ov-dragging'), 0);
+      });
+      widget.addEventListener('dragend', () => {
+        widget.classList.remove('ov-dragging');
+        widget.setAttribute('draggable','false');
+        grid.querySelectorAll('.ov-widget').forEach(w => w.classList.remove('ov-drag-over'));
+        _ovDragSrc = null;
+      });
+      widget.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (_ovDragSrc && widget !== _ovDragSrc) widget.classList.add('ov-drag-over');
+      });
+      widget.addEventListener('dragleave', e => {
+        if (!widget.contains(e.relatedTarget)) widget.classList.remove('ov-drag-over');
+      });
+      widget.addEventListener('drop', e => {
+        e.preventDefault();
+        widget.classList.remove('ov-drag-over');
+        if (!_ovDragSrc || _ovDragSrc === widget) return;
+        const srcPos = _ovDragSrc.getAttribute('data-pos');
+        const tgtPos = widget.getAttribute('data-pos');
+        _ovDragSrc.setAttribute('data-pos', tgtPos);
+        widget.setAttribute('data-pos', srcPos);
+      });
+    });
+    grid.querySelectorAll('.ov-resize-hdl').forEach(hdl => {
+      hdl.addEventListener('mousedown', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const widget = hdl.closest('.ov-widget');
+        const inner = widget.querySelector('.ov-card') || widget;
+        const startY = e.clientY;
+        const startH = inner.getBoundingClientRect().height;
+        document.body.style.cursor = 'se-resize';
+        document.body.style.userSelect = 'none';
+        const onMove = e2 => {
+          const newH = Math.max(120, startH + e2.clientY - startY);
+          inner.style.minHeight = newH + 'px';
+          inner.style.maxHeight = 'none';
+        };
+        const onUp = () => {
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    });
+  }
+  document.addEventListener('DOMContentLoaded', initOvWidgets);
+
+  /* ── Right panel collapse / expand (mirrors sidebar pattern) ── */
+  function rpToggle(e) {
+    if (e) e.stopPropagation();
+    const rp = document.getElementById('rightPanel');
+    const btn = document.getElementById('rpToggleBtn');
+    if (!rp || !btn) return;
+    const collapsed = rp.classList.toggle('rp-collapsed');
+    btn.setAttribute('aria-expanded', String(!collapsed));
+    btn.title = collapsed ? 'Expand preview' : 'Collapse preview';
+    btn.setAttribute('aria-label', collapsed ? 'Expand preview' : 'Collapse preview');
+    try { localStorage.setItem('rp_collapsed', collapsed ? '1' : '0'); } catch (_) {}
+  }
+  function rpExpandFromRail(e) {
+    const rp = document.getElementById('rightPanel');
+    if (!rp || !rp.classList.contains('rp-collapsed')) return;
+    // Click anywhere on the rail (not just the toggle) expands
+    if (e.target.closest('.rp-toggle')) return; // toggle handles its own click
+    rpToggle();
+  }
+  function rpInit() {
+    try {
+      const stored = localStorage.getItem('rp_collapsed');
+      if (stored === '1') {
+        const rp = document.getElementById('rightPanel');
+        const btn = document.getElementById('rpToggleBtn');
+        if (rp) {
+          rp.classList.add('rp-collapsed');
+          if (btn) {
+            btn.setAttribute('aria-expanded','false');
+            btn.title = 'Expand preview';
+            btn.setAttribute('aria-label','Expand preview');
+          }
+        }
+      }
+    } catch (_) {}
+  }
+  document.addEventListener('DOMContentLoaded', rpInit);
+
+  /* ── Publish simulation ── */
+  let _pubRunning = false;
+  function _setPubState(state) {
+    document.getElementById('pubStateConfirm').style.display = state === 'confirm' ? '' : 'none';
+    document.getElementById('pubStateProgress').style.display = state === 'progress' ? '' : 'none';
+    document.getElementById('pubStateSuccess').style.display = state === 'success' ? '' : 'none';
+  }
+  function _resetPubSteps() {
+    document.querySelectorAll('#pubSteps .pub-step').forEach(s => {
+      s.classList.remove('active','done');
+      const ico = s.querySelector('.pub-step-icon');
+      ico.innerHTML = '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" fill="currentColor"/></svg>';
+      s.querySelector('.pub-step-time').textContent = '';
+    });
+  }
+  function openPub() {
+    _resetPubSteps();
+    _setPubState('confirm');
+    document.getElementById('pubTitle').textContent = 'Publish widget';
+    document.getElementById('pubHdIco').classList.remove('ok');
+    document.getElementById('pubFt').innerHTML =
+      '<button class="btn btn-ghost" onclick="closePub()">Cancel</button>' +
+      '<button class="btn btn-primary" onclick="runPublish()">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2"/></svg>' +
+        ' Publish to production' +
+      '</button>';
+    document.getElementById('pubOverlay').classList.add('open');
+  }
+  function closePub() {
+    if (_pubRunning) return;
+    document.getElementById('pubOverlay').classList.remove('open');
+  }
+  function runPublish() {
+    _pubRunning = true;
+    _setPubState('progress');
+    document.getElementById('pubTitle').textContent = 'Publishing…';
+    document.getElementById('pubFt').innerHTML =
+      '<span style="font-size:11px;color:var(--t4);margin-right:auto">Do not close this window</span>' +
+      '<button class="btn btn-ghost" disabled style="opacity:.4;cursor:not-allowed">Cancel</button>';
+
+    const steps = document.querySelectorAll('#pubSteps .pub-step');
+    const delays = [800, 1100, 1300, 700];
+    let i = 0;
+    const advance = () => {
+      if (i > 0) {
+        const prev = steps[i - 1];
+        prev.classList.remove('active');
+        prev.classList.add('done');
+        prev.querySelector('.pub-step-icon').innerHTML =
+          '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 8 7 11 12 5"/></svg>';
+        prev.querySelector('.pub-step-time').textContent = (delays[i - 1] / 1000).toFixed(1) + 's';
+      }
+      if (i >= steps.length) {
+        setTimeout(() => {
+          _pubRunning = false;
+          _setPubState('success');
+          document.getElementById('pubTitle').textContent = 'Published';
+          document.getElementById('pubHdIco').classList.add('ok');
+          document.getElementById('pubHdIco').innerHTML =
+            '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 8 7 11 12 5"/></svg>';
+          document.getElementById('pubFt').innerHTML =
+            '<button class="btn btn-ghost" onclick="window.open(\'https://acme.com\',\'_blank\');toast(\'Opening live preview…\',\'info\')">' +
+              '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+              ' View live' +
+            '</button>' +
+            '<button class="btn btn-primary" onclick="closePub()">Done</button>';
+          toast('Widget v2.4.2 is live','success');
+        }, 350);
+        return;
+      }
+      const cur = steps[i];
+      cur.classList.add('active');
+      cur.querySelector('.pub-step-icon').innerHTML =
+        '<svg class="pub-spin" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M8 1.8a6.2 6.2 0 016.2 6.2"/></svg>';
+      setTimeout(advance, delays[i]);
+      i++;
+    };
+    advance();
+  }
+  /* ── Inline-edit page header (click on title or description to edit in place) ── */
+  function attachInlineEdit(el, opts) {
+    if (!el) return;
+    opts = opts || {};
+    el.addEventListener('click', () => {
+      if (el.contentEditable === 'true') return;
+      el.dataset.original = el.textContent;
+      el.contentEditable = 'true';
+      el.classList.add('editing');
+      el.focus();
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    });
+    const finish = (save) => {
+      if (el.contentEditable !== 'true') return;
+      const original = el.dataset.original || '';
+      const current = el.textContent.trim();
+      if (!save) {
+        el.textContent = original;
+      } else {
+        el.textContent = current;
+      }
+      el.contentEditable = 'false';
+      el.classList.remove('editing');
+      window.getSelection()?.removeAllRanges();
+      if (save && current !== original.trim() && opts.onSave) opts.onSave(current);
+    };
+    el.addEventListener('blur', () => finish(true));
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.preventDefault(); finish(false); el.blur(); }
+      if (e.key === 'Enter' && !opts.multiline) { e.preventDefault(); el.blur(); }
+      if (e.key === 'Enter' && opts.multiline && !e.shiftKey && (e.metaKey || e.ctrlKey)) { e.preventDefault(); el.blur(); }
+    });
+    el.addEventListener('paste', e => {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+      document.execCommand('insertText', false, text);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    attachInlineEdit(document.getElementById('pageTitleEdit'), {
+      multiline: false,
+      onSave: v => toast(v ? 'Name saved' : 'Name cleared', 'success')
+    });
+    attachInlineEdit(document.getElementById('pageDescEdit'), {
+      multiline: true,
+      onSave: v => toast(v ? 'Description saved' : 'Description cleared', 'success')
+    });
+  });
+
+  /* ── Create-Widget modal ── */
+  let _nwAgent = 'Sales AI';
+  let _nwDomains = [];
+  function openNewWidget() {
+    // Reset state
+    _nwAgent = 'Sales AI';
+    _nwDomains = [];
+    document.getElementById('nwName').value = '';
+    document.getElementById('nwDesc').value = '';
+    document.getElementById('nwDomainInput').value = '';
+    document.querySelectorAll('#nwOverlay .nw-radio').forEach(r => {
+      const sel = r.dataset.agent === _nwAgent;
+      r.classList.toggle('selected', sel);
+      r.setAttribute('aria-checked', String(sel));
+    });
+    nwRenderDomains();
+    nwUpdateDomainBtn();
+    nwUpdate();
+    document.getElementById('nwOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('nwName')?.focus(), 100);
+  }
+  function closeNewWidget() {
+    document.getElementById('nwOverlay').classList.remove('open');
+  }
+  function nwSelectAgent(agent) {
+    _nwAgent = agent;
+    document.querySelectorAll('#nwOverlay .nw-radio').forEach(r => {
+      const sel = r.dataset.agent === agent;
+      r.classList.toggle('selected', sel);
+      r.setAttribute('aria-checked', String(sel));
+    });
+    nwUpdate();
+  }
+  function nwUpdateDomainBtn() {
+    const v = document.getElementById('nwDomainInput').value.trim();
+    const valid = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i.test(v) && !_nwDomains.includes(v.toLowerCase());
+    document.getElementById('nwAddDomainBtn').disabled = !valid;
+  }
+  function nwAddDomain() {
+    const input = document.getElementById('nwDomainInput');
+    const v = input.value.trim().toLowerCase();
+    if (!v || _nwDomains.includes(v)) return;
+    _nwDomains.push(v);
+    input.value = '';
+    nwRenderDomains();
+    nwUpdateDomainBtn();
+    nwUpdate();
+    input.focus();
+  }
+  function nwRemoveDomain(d) {
+    _nwDomains = _nwDomains.filter(x => x !== d);
+    nwRenderDomains();
+    nwUpdateDomainBtn();
+    nwUpdate();
+  }
+  function nwRenderDomains() {
+    const list = document.getElementById('nwDomainList');
+    list.innerHTML = _nwDomains.map(d =>
+      `<span class="nw-chip" role="listitem">
+        <svg class="nw-chip-ico" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6h9M6 1.5c1.5 1.4 1.5 7.6 0 9M6 1.5c-1.5 1.4-1.5 7.6 0 9" stroke="currentColor" stroke-width="1.1"/></svg>
+        ${d}
+        <button class="nw-chip-x" onclick="nwRemoveDomain('${d.replace(/'/g,"\\'")}')" aria-label="Remove ${d}">×</button>
+      </span>`
+    ).join('');
+  }
+  function nwUpdate() {
+    const name = document.getElementById('nwName').value.trim();
+    const hasAgent = !!_nwAgent;
+    const hasDomain = _nwDomains.length > 0;
+    const willBeActive = hasAgent && hasDomain;
+    // Status preview
+    const preview = document.getElementById('nwStatusPreview');
+    const ico = document.getElementById('nwStatusIco');
+    const text = document.getElementById('nwStatusText');
+    preview.classList.toggle('active', willBeActive);
+    preview.classList.toggle('draft', !willBeActive);
+    if (willBeActive) {
+      ico.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 8 7 11 12 5"/></svg>';
+      text.innerHTML = 'Will be created as <strong>Active</strong> — agent assigned and ' + _nwDomains.length + ' domain' + (_nwDomains.length === 1 ? '' : 's') + ' configured.';
+    } else {
+      ico.innerHTML = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 2h7.5L13 4.5V14H3V2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M10.5 2v3H13" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>';
+      const missing = [];
+      if (!hasAgent) missing.push('an agent');
+      if (!hasDomain) missing.push('at least one domain');
+      text.innerHTML = 'Will be saved as <strong>Draft</strong> — add ' + missing.join(' and ') + ' to activate.';
+    }
+    // Create button state
+    const btn = document.getElementById('nwCreateBtn');
+    const label = document.getElementById('nwCreateLabel');
+    btn.disabled = !name;
+    label.textContent = willBeActive ? 'Create widget' : 'Save as draft';
+  }
+  function createWidget() {
+    const name = document.getElementById('nwName').value.trim();
+    if (!name) return;
+    const desc = document.getElementById('nwDesc').value.trim();
+    const willBeActive = !!_nwAgent && _nwDomains.length > 0;
+    const id = 'wgt-' + Date.now().toString(36);
+    const newWidget = {
+      id, name, status: willBeActive ? 'active' : 'draft', ago: 'Created just now',
+      iconKind: willBeActive ? 'web' : 'draft',
+      domain: _nwDomains[0] || null,
+      domainLabel: _nwDomains.length ? `${_nwDomains.length} approved domain${_nwDomains.length === 1 ? '' : 's'}` : null,
+      agent: _nwAgent || null,
+      desc: desc || (_nwAgent === 'Sales AI' ? 'lead qualification & vehicle recommendations' : _nwAgent === 'Support AI' ? 'ticket triage & FAQ' : null),
+      aiSummary: null,
+      chats: 0, successRate: willBeActive ? 0 : null, avgResp: null, hitl: 0,
+      incomplete: !willBeActive,
+      cat: 'Web'
+    };
+    WIDGETS.unshift(newWidget);
+    closeNewWidget();
+    renderWidgetList();
+    toast(willBeActive ? `Widget "${name}" created` : `Draft "${name}" saved`, 'success');
+  }
+
+  function copyPubSnippet() {
+    const txt = document.getElementById('pubSnippet').innerText;
+    if (navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>toast('Snippet copied','success'));
+    else toast('Snippet copied','success');
+  }
+
+  /* ── Sidebar sub-section toggle ── */
+  function toggleSbSection(subId, btnId) {
+    const sub = document.getElementById(subId);
+    const btn = btnId ? document.getElementById(btnId) : null;
+    if (!sub) return;
+    const sidebar = document.getElementById('appSidebar');
+    if (sidebar && !sidebar.classList.contains('sb-expanded')) {
+      sbToggle();
+      setTimeout(() => {
+        sub.classList.add('open');
+        if (btn) btn.classList.add('sb-open');
+      }, 230);
+      return;
+    }
+    const isOpen = sub.classList.toggle('open');
+    if (btn) btn.classList.toggle('sb-open', isOpen);
+  }
+
+  /* ── Studio switcher dropdown ── */
+  function toggleStudioSw(e) {
+    e.stopPropagation();
+    const sw = document.getElementById('studioSw');
+    const launcher = document.getElementById('studioLauncher');
+    if (!sw) return;
+    const isOpen = sw.classList.toggle('open');
+    launcher.classList.toggle('sw-open', isOpen);
+  }
+  document.addEventListener('click', function(e) {
+    const launcher = document.getElementById('studioLauncher');
+    const sw = document.getElementById('studioSw');
+    if (sw && launcher && !launcher.contains(e.target)) {
+      sw.classList.remove('open');
+      launcher.classList.remove('sw-open');
+    }
+  });
+
+  /* ── Toast ── */
+  function toast(msg, type='default') {
+    const icons={success:'✓',error:'✕',info:'→',default:'·'};
+    const colors={success:'var(--ok)',error:'var(--err)',info:'var(--pri)',default:'var(--t2)'};
+    const t = document.createElement('div');
+    t.className='toast';
+    t.innerHTML=`<span style="color:${colors[type]};font-size:15px;font-weight:700">${icons[type]}</span><span>${msg}</span>`;
+    const ctr = document.getElementById('toastCtr');
+    if (!ctr) return;
+    ctr.appendChild(t);
+    setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';t.style.transition='all .3s';setTimeout(()=>t.remove(),300)},3000);
   }
 </script>
 </body>
