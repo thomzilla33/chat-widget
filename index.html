@@ -134,19 +134,30 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
 .btn-dots { background:transparent; border-color:rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); padding:7px 10px; }
 
 /* Tabs */
-.tabs { display:flex; border-bottom:1px solid rgba(255,255,255,0.08); margin-top:16px; flex-shrink:0; }
+.tabs { display:flex; border-bottom:1px solid rgba(255,255,255,0.08); margin-top:16px; flex-shrink:0; gap:2px; }
 .tab {
-  padding:10px 16px 11px; font-size:13px; font-weight:500;
-  color:rgba(255,255,255,0.4); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
-  transition:all 0.15s; white-space:nowrap;
+  padding:10px 14px 11px; font-size:13px; font-weight:500;
+  color:rgba(255,255,255,0.42); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:color 0.15s, border-color 0.15s, background 0.12s;
+  white-space:nowrap; border-radius:6px 6px 0 0; user-select:none;
 }
-.tab:hover { color:rgba(255,255,255,0.7); }
-.tab.active { color:#fff; border-bottom-color:#2563eb; }
+.tab:hover { color:rgba(255,255,255,0.78); background:rgba(255,255,255,0.025); }
+.tab.active { color:#fff; border-bottom-color:#2563eb; font-weight:600; }
+.tab:focus-visible { outline:2px solid var(--pri); outline-offset:-2px; border-radius:6px; }
 
 /* Tab content */
-.tab-content { flex:1; overflow-y:auto; padding:24px 0; }
-.tab-content::-webkit-scrollbar { width:4px; }
-.tab-content::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+.tab-content { flex:1; overflow-y:auto; padding:24px 0; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.18) transparent; }
+.tab-content::-webkit-scrollbar { width:8px; height:8px; }
+.tab-content::-webkit-scrollbar-track { background:transparent; }
+.tab-content::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:8px; border:2px solid transparent; background-clip:padding-box; }
+.tab-content::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.22); border:2px solid transparent; background-clip:padding-box; }
+
+/* Global scrollbar styling for any other scroll container in the app */
+.list-scroll, .pub-body, .nw-domain-list, body { scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.18) transparent; }
+.list-scroll::-webkit-scrollbar, .pub-body::-webkit-scrollbar, .nw-domain-list::-webkit-scrollbar { width:8px; height:8px; }
+.list-scroll::-webkit-scrollbar-track, .pub-body::-webkit-scrollbar-track, .nw-domain-list::-webkit-scrollbar-track { background:transparent; }
+.list-scroll::-webkit-scrollbar-thumb, .pub-body::-webkit-scrollbar-thumb, .nw-domain-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:8px; border:2px solid transparent; background-clip:padding-box; }
+.list-scroll::-webkit-scrollbar-thumb:hover, .pub-body::-webkit-scrollbar-thumb:hover, .nw-domain-list::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.22); }
 
 .tab-panel { display:none; }
 .tab-panel.active { display:block; }
@@ -255,7 +266,28 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
   background-repeat:no-repeat; background-position:right 14px center;
   padding-right:36px;
 }
-.dropdown-select:focus { border-color:rgba(37,99,235,0.5); }
+.dropdown-select:focus { border-color:rgba(37,99,235,0.5); box-shadow:0 0 0 3px rgba(37,99,235,0.15); }
+.dropdown-select option { background:#0e1424; color:rgba(255,255,255,0.9); }
+
+/* Global focus rings for accessibility */
+.field-input:focus,
+.nw-input:focus,
+.nw-textarea:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  outline:none;
+  box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+}
+button:focus-visible {
+  outline:2px solid var(--pri);
+  outline-offset:2px;
+}
+
+/* Description max-width on detail page header */
+#pageDescEdit { max-width:720px }
 
 /* Network list selector */
 .network-selector { border:1px solid rgba(255,255,255,0.1); border-radius:10px; overflow:hidden; }
@@ -612,25 +644,29 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
   font-family:inherit;font-size:13px;font-weight:500;width:100%;text-align:left;
   transition:color .12s, background .12s;flex-shrink:0;
 }
-.sidebar:not(.sb-expanded) .sb-item{justify-content:center;padding:0}
+.sidebar:not(.sb-expanded) .sb-nav{padding:6px 0;align-items:center}
+.sidebar:not(.sb-expanded) .sb-item{justify-content:center;padding:0;width:36px}
+.sidebar:not(.sb-expanded) .sb-divider{width:24px;margin:4px auto}
 .sidebar.sb-expanded .sb-item{justify-content:flex-start;padding:0 8px;gap:10px}
+.sb-item{color:rgba(180,205,245,0.78)}
 .sb-item-icon{
   width:36px;height:36px;border-radius:var(--r8);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  color:#80AFFF;
   transition:background .12s, color .12s;
 }
 .sb-item-icon svg{width:17px;height:17px}
-.sb-item:hover{background:transparent;color:var(--t2)}
-.sb-item:hover .sb-item-icon{background:rgba(255,255,255,0.09)}
+.sb-item:hover{background:transparent;color:#B6D2F8}
+.sb-item:hover .sb-item-icon{background:rgba(43,127,255,0.10);color:#A9C7FF}
 .sidebar:not(.sb-expanded) .sb-item.active{background:transparent}
 .sidebar:not(.sb-expanded) .sb-item.active .sb-item-icon{
-  background:var(--grad);color:#fff;
+  background:var(--grad);color:#fff;box-shadow:0 4px 14px rgba(0,194,194,0.25);
 }
 .sidebar.sb-expanded .sb-item.active{
   background:rgba(43,127,255,0.10);color:var(--t1);
 }
 .sidebar.sb-expanded .sb-item.active .sb-item-icon{
-  background:var(--grad);color:#fff;
+  background:var(--grad);color:#fff;box-shadow:0 4px 14px rgba(0,194,194,0.25);
 }
 .sb-item.active:hover .sb-item-icon{background:var(--grad)}
 .sb-label{opacity:0;transition:opacity .12s;pointer-events:none;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1024,44 +1060,35 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
 <nav class="sidebar" id="appSidebar" aria-label="Main navigation">
   <div class="sb-nav">
 
+    <!-- Top: collapse / expand toggle -->
+    <button class="sb-item sb-toggle-top" id="sbToggleBtn" onclick="sbToggle()" title="Toggle sidebar" aria-label="Toggle sidebar" aria-expanded="false">
+      <span class="sb-item-icon"><svg class="sb-toggle-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="13" height="12" rx="1.5"/><line x1="6.5" y1="3" x2="6.5" y2="15"/></svg></span>
+      <span class="sb-label sb-toggle-label">Collapse</span>
+    </button>
+
+    <div class="sb-divider"></div>
+
+    <!-- Home (Control Tower) -->
     <button class="sb-item" onclick="toast('Control Tower')" title="Control Tower" aria-label="Control Tower">
-      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 16v-5"/><path d="M6 16h6"/><rect x="6.5" y="8.5" width="5" height="2.5" rx="1"/><path d="M7.5 8.5V7.5M10.5 8.5V7.5"/><path d="M4 5a6 6 0 0110 0"/><path d="M6 6.5a3.5 3.5 0 016 0"/></svg></span>
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5L9 2.5l6.5 6"/><path d="M4 8v7h10V8"/><path d="M7.5 15v-3.5h3V15"/></svg></span>
       <span class="sb-label">Control Tower</span>
     </button>
 
-    <div class="sb-divider"></div>
-
-    <button class="sb-item" onclick="toast('Agents')" title="Agents" aria-label="Agents">
-      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="9" cy="6" r="3"/><path d="M3 17c0-3.314 2.686-5 6-5s6 1.686 6 5"/></svg></span>
-      <span class="sb-label">Agents</span>
-    </button>
-
-    <button class="sb-item" onclick="toast('Squads')" title="Squads" aria-label="Squads">
-      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="6.5" cy="5.5" r="2.5"/><circle cx="11.5" cy="5.5" r="2.5"/><path d="M1 16c0-2.5 2.5-4 5.5-4s5.5 1.5 5.5 4"/><path d="M12 12c1.5.3 4 1.2 4 4"/></svg></span>
-      <span class="sb-label">Squads</span>
-    </button>
-
-    <button class="sb-item" onclick="toast('Workflows')" title="Workflows" aria-label="Workflows">
-      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="1.5"/><path d="M5 7.5v1.5A1.5 1.5 0 006.5 10.5H8M10 7.5L9 9l1 1.5"/></svg></span>
-      <span class="sb-label">Workflows</span>
-    </button>
-
+    <!-- Sparkles (Agentic Networks) -->
     <a class="sb-item" href="agentic-studio.html" title="Agentic Networks" aria-label="Agentic Networks">
-      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="9" cy="3" r="1.8"/><circle cx="3" cy="15" r="1.8"/><circle cx="15" cy="15" r="1.8"/><path d="M9 4.8L3 13.2M9 4.8L15 13.2M3 13.2h12"/></svg></span>
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 1.5l1.6 4.4L15 7.5l-4.4 1.6L9 13.5 7.4 9.1 3 7.5l4.4-1.6L9 1.5z"/></svg></span>
       <span class="sb-label">Agentic Networks</span>
     </a>
 
-    <div class="sb-divider"></div>
-
-    <button class="sb-item active" title="Chat Widget" aria-label="Chat Widget" aria-current="page" onclick="showListView()">
-      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3.5h12a1 1 0 011 1v7a1 1 0 01-1 1h-5l-3 2.5v-2.5H3a1 1 0 01-1-1v-7a1 1 0 011-1z"/><circle cx="6" cy="8" r=".7" fill="currentColor"/><circle cx="9" cy="8" r=".7" fill="currentColor"/><circle cx="12" cy="8" r=".7" fill="currentColor"/></svg></span>
-      <span class="sb-label">Chat Widget</span>
+    <!-- Lightning (Workflows) -->
+    <button class="sb-item" onclick="toast('Workflows')" title="Workflows" aria-label="Workflows">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 1.5L4.5 10h3.5l-1 6.5L13.5 8h-3.5l1-6.5z"/></svg></span>
+      <span class="sb-label">Workflows</span>
     </button>
 
-    <div class="sb-divider"></div>
-
+    <!-- Document with lines (Playbooks) -->
     <button class="sb-item" id="sbPlaybooksBtn" onclick="toggleSbSection('sbPlaybooksSub','sbPlaybooksBtn')" title="Playbooks" aria-label="Playbooks">
-      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2h7.5L14 4.5V16H4V2z"/><path d="M7 7h4M7 10h4M7 13h2"/><path d="M11.5 2v3H14"/></svg></span>
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2.5" width="12" height="13" rx="1.5"/><path d="M5.5 6h7M5.5 9h7M5.5 12h4"/></svg></span>
       <span class="sb-label">Playbooks</span>
       <svg class="sb-chevron" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l3.5 3.5L10 5"/></svg>
     </button>
@@ -1089,24 +1116,26 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
       </button>
     </div>
 
-    <div class="sb-divider"></div>
+    <!-- Person (Agents) -->
+    <button class="sb-item" onclick="toast('Agents')" title="Agents" aria-label="Agents">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3 16c0-3 2.5-5 6-5s6 2 6 5"/></svg></span>
+      <span class="sb-label">Agents</span>
+    </button>
 
+    <!-- Shield (ACTIVE — Chat Widget) -->
+    <button class="sb-item active" title="Chat Widget" aria-label="Chat Widget" aria-current="page" onclick="showListView()">
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2L3 4.5v5C3 13 5.5 15.5 9 16c3.5-.5 6-3 6-6.5v-5L9 2z"/></svg></span>
+      <span class="sb-label">Chat Widget</span>
+    </button>
+
+    <!-- Card / Dashboard grid (Admin) -->
     <button class="sb-item" onclick="toast('Admin')" title="Admin" aria-label="Admin">
-      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M9 2l1.5 4h4l-3.5 2.5 1.5 4L9 10l-3.5 2.5 1.5-4L3.5 6h4z"/></svg></span>
+      <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="6" height="6" rx="1"/><rect x="9.5" y="2.5" width="6" height="6" rx="1"/><rect x="2.5" y="9.5" width="6" height="6" rx="1"/><rect x="9.5" y="9.5" width="6" height="6" rx="1"/></svg></span>
       <span class="sb-label">Admin</span>
-      <svg class="sb-chevron" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l3.5 3.5L10 5"/></svg>
     </button>
+
   </div>
 
-  <div class="sb-bottom">
-    <button class="sb-toggle" id="sbToggleBtn" onclick="sbToggle()" title="Toggle sidebar" aria-label="Toggle sidebar" aria-expanded="false">
-      <svg class="sb-toggle-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M11 4L6 9l5 5"/>
-        <line x1="3" y1="3" x2="3" y2="15"/>
-      </svg>
-      <span class="sb-toggle-label">Collapse</span>
-    </button>
-  </div>
 </nav>
 
 <!-- ── LIST VIEW (default landing) ── -->
@@ -1152,19 +1181,33 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
           <span class="tb-launcher-name">AIMS OS</span>
           <svg class="tb-launcher-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="studio-sw" id="studioSw" role="menu">
-            <div class="studio-sw-hd"><span class="studio-sw-title">Switch Studio</span></div>
+            <div class="studio-sw-hd"><span class="studio-sw-title">AIMS-OS Platform</span></div>
             <a class="studio-item" href="agentic-studio.html" role="menuitem">
-              <div class="studio-item-ico" style="background:var(--grad)">AS</div>
+              <div class="studio-item-ico" style="background:linear-gradient(135deg,#A78BFA 0%,#7C3AED 100%)">AS</div>
               <div class="studio-item-info">
                 <div class="studio-item-name">Agentic Studio</div>
-                <div class="studio-item-desc">Agents &amp; workflows</div>
+                <div class="studio-item-desc">Agents &amp; networks</div>
+              </div>
+            </a>
+            <a class="studio-item" href="communication-hub.html" role="menuitem">
+              <div class="studio-item-ico" style="background:linear-gradient(135deg,#2B7FFF 0%,#1D4ED8 100%)">CH</div>
+              <div class="studio-item-info">
+                <div class="studio-item-name">Communication Hub</div>
+                <div class="studio-item-desc">Voice · WhatsApp · Email · SMS</div>
               </div>
             </a>
             <a class="studio-item" href="governance-studio.html" role="menuitem">
-              <div class="studio-item-ico" style="background:linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%)">GS</div>
+              <div class="studio-item-ico" style="background:linear-gradient(135deg,#05DF72 0%,#059669 100%)">GS</div>
               <div class="studio-item-info">
                 <div class="studio-item-name">Governance Studio</div>
-                <div class="studio-item-desc">Policies &amp; knowledge</div>
+                <div class="studio-item-desc">Knowledge &amp; policies</div>
+              </div>
+            </a>
+            <a class="studio-item" href="voice-channel-ux.html" role="menuitem">
+              <div class="studio-item-ico" style="background:linear-gradient(135deg,#FDC700 0%,#D97706 100%)">VC</div>
+              <div class="studio-item-info">
+                <div class="studio-item-name">Voice Channel UX</div>
+                <div class="studio-item-desc">Call routing &amp; handoff</div>
               </div>
             </a>
             <a class="studio-item s-active" href="chat-widget.html" role="menuitem">
@@ -1244,16 +1287,7 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
                   <button class="ov-drag-grip" title="Drag to rearrange" aria-label="Drag to rearrange">
                     <svg width="10" height="14" viewBox="0 0 10 14" fill="none"><circle cx="3" cy="2.5" r="1.2" fill="currentColor"/><circle cx="7" cy="2.5" r="1.2" fill="currentColor"/><circle cx="3" cy="7" r="1.2" fill="currentColor"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/><circle cx="3" cy="11.5" r="1.2" fill="currentColor"/><circle cx="7" cy="11.5" r="1.2" fill="currentColor"/></svg>
                   </button>
-                  <span class="ov-card-title">
-                    <svg viewBox="0 0 16 16" fill="none"><polyline points="14 9 11 9 9 14 6 2 4 9 1 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Metrics
-                  </span>
-                  <button class="ds-card-act" title="Pin" onclick="toast('Metrics pinned','info')" aria-label="Pin">
-                    <svg viewBox="0 0 16 16" fill="none"><path d="M9.5 1.5L14.5 6.5l-3.5 1L7 11.5 4.5 9 1.5 12V14.5H4l3-3L9.5 14l4-4 1-3.5L14.5 6.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
-                  </button>
-                  <button class="ds-card-act danger" title="Remove" onclick="toast('Card removed','default')" aria-label="Remove">
-                    <svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2.5h4V4M5 4l.7 9.5h4.6L11 4M7 6.5v5M9 6.5v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  </button>
+                  <span class="ov-card-title">Metrics</span>
                 </div>
                 <div class="ds-rows">
                   <button class="ds-row" onclick="toast('Success Rate trend','info')">
@@ -1294,37 +1328,24 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
                   <button class="ov-drag-grip" title="Drag to rearrange" aria-label="Drag to rearrange">
                     <svg width="10" height="14" viewBox="0 0 10 14" fill="none"><circle cx="3" cy="2.5" r="1.2" fill="currentColor"/><circle cx="7" cy="2.5" r="1.2" fill="currentColor"/><circle cx="3" cy="7" r="1.2" fill="currentColor"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/><circle cx="3" cy="11.5" r="1.2" fill="currentColor"/><circle cx="7" cy="11.5" r="1.2" fill="currentColor"/></svg>
                   </button>
-                  <span class="ov-card-title">
-                    <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 7v4M8 5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-                    Widget Info
-                  </span>
-                  <button class="ds-card-act" title="Pin" onclick="toast('Widget Info pinned','info')" aria-label="Pin">
-                    <svg viewBox="0 0 16 16" fill="none"><path d="M9.5 1.5L14.5 6.5l-3.5 1L7 11.5 4.5 9 1.5 12V14.5H4l3-3L9.5 14l4-4 1-3.5L14.5 6.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
-                  </button>
-                  <button class="ds-card-act danger" title="Remove" onclick="toast('Card removed','default')" aria-label="Remove">
-                    <svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2.5h4V4M5 4l.7 9.5h4.6L11 4M7 6.5v5M9 6.5v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  </button>
+                  <span class="ov-card-title">Widget Info</span>
                 </div>
                 <div class="ds-rows">
                   <button class="ds-row" onclick="toast('Owner profile','info')">
                     <span class="ds-row-ico" style="background:linear-gradient(135deg,#155DFC,#00C2C2);color:#fff;font-size:9px;font-weight:700;letter-spacing:-.2px">TH</span>
                     <span class="ds-row-body"><span class="ds-row-title">Thomas González</span><span class="ds-row-sub">Owner</span></span>
-                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </button>
                   <button class="ds-row" onclick="toast('Version history','info')">
                     <span class="ds-row-ico tone-pri"><svg viewBox="0 0 16 16" fill="none"><path d="M2 4l6-2.5L14 4v8L8 14.5 2 12V4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M2 4l6 2.5L14 4M8 6.5V14.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>
                     <span class="ds-row-body"><span class="ds-row-title">v2.4.1</span><span class="ds-row-sub">Version</span></span>
-                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </button>
                   <button class="ds-row" onclick="goTo('embed')">
                     <span class="ds-row-ico tone-ok"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M2 8h12M8 2c2 1.8 2 10.2 0 12M8 2c-2 1.8-2 10.2 0 12" stroke="currentColor" stroke-width="1.2"/></svg></span>
                     <span class="ds-row-body"><span class="ds-row-title">3 configured</span><span class="ds-row-sub">Trusted Domains</span></span>
-                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </button>
                   <button class="ds-row" onclick="toast('Creation details','info')">
                     <span class="ds-row-ico"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 6h12M5 1.5v3M11 1.5v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
                     <span class="ds-row-body"><span class="ds-row-title">Mar 14, 2025</span><span class="ds-row-sub">Created</span></span>
-                    <svg class="ds-row-chev" viewBox="0 0 12 12" fill="none"><polyline points="4.5 2.5 8 6 4.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </button>
                 </div>
               </div>
@@ -1340,16 +1361,7 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
                   <button class="ov-drag-grip" title="Drag to rearrange" aria-label="Drag to rearrange">
                     <svg width="10" height="14" viewBox="0 0 10 14" fill="none"><circle cx="3" cy="2.5" r="1.2" fill="currentColor"/><circle cx="7" cy="2.5" r="1.2" fill="currentColor"/><circle cx="3" cy="7" r="1.2" fill="currentColor"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/><circle cx="3" cy="11.5" r="1.2" fill="currentColor"/><circle cx="7" cy="11.5" r="1.2" fill="currentColor"/></svg>
                   </button>
-                  <span class="ov-card-title">
-                    <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="12.5" r="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M7 5L4 11M9 5L12 11M4.5 12.5h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-                    Assigned Agentic Network
-                  </span>
-                  <button class="ds-card-act" title="Pin" onclick="toast('Network pinned','info')" aria-label="Pin">
-                    <svg viewBox="0 0 16 16" fill="none"><path d="M9.5 1.5L14.5 6.5l-3.5 1L7 11.5 4.5 9 1.5 12V14.5H4l3-3L9.5 14l4-4 1-3.5L14.5 6.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
-                  </button>
-                  <button class="ds-card-act danger" title="Remove" onclick="toast('Card removed','default')" aria-label="Remove">
-                    <svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2.5h4V4M5 4l.7 9.5h4.6L11 4M7 6.5v5M9 6.5v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  </button>
+                  <span class="ov-card-title">Assigned Agentic Network</span>
                 </div>
                 <div class="ds-rows">
                   <button class="ds-row" onclick="goTo('agent')">
@@ -1390,12 +1402,45 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
         <!-- ── APPEARANCE ── -->
         <div id="tab-appearance" class="tab-panel">
 
+          <div class="avatar-section">
+            <div class="section-label">Agentic Network Avatar</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.36);margin-bottom:12px">Pick a preset or upload your own image</div>
+            <div class="avatar-grid">
+              <!-- Custom upload -->
+              <div class="avatar-upload" id="avatar-upload-btn" title="Upload custom avatar">
+                <input type="file" accept="image/*" onchange="previewAvatar(event)" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div id="avatar-custom" class="avatar-custom-preview">
+                <img id="avatar-img" src="" alt="Custom" />
+              </div>
+
+              <!-- Presets -->
+              <div class="avatar-preset selected" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <div class="avatar-preset" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+              </div>
+              <div class="avatar-preset" style="background:linear-gradient(135deg,#10b981,#34d399)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div class="avatar-preset" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
+              </div>
+              <div class="avatar-preset" style="background:linear-gradient(135deg,#ec4899,#a855f7)" onclick="selectPreset(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+            </div>
+            <div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.28);margin-bottom:24px">Supported formats: PNG, JPG, SVG · Max 2MB · Recommended 256×256px</div>
+          </div>
+
           <div class="section-label">Brand Color</div>
           <div class="info-grid" style="margin-bottom:20px">
             <div class="info-row">
               <div class="info-cell">
                 <div class="info-cell-label">Primary Color
-                  <span style="font-size:9px;color:rgba(255,255,255,0.25);margin-left:4px">Afecta botones, avatares, estados activos y acentos del widget</span>
+                  <span style="font-size:10px;color:rgba(255,255,255,0.32);margin-left:6px">Affects buttons, avatars, active states and widget accents</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
                   <div id="ap-sw1" style="width:40px;height:40px;border-radius:9px;background:#2563eb;border:1px solid rgba(255,255,255,0.15);cursor:pointer;position:relative;overflow:hidden;flex-shrink:0">
@@ -1411,7 +1456,7 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
                     <div style="width:26px;height:26px;border-radius:7px;background:#06b6d4;cursor:pointer;border:2px solid transparent;flex-shrink:0" title="Cyan" onclick="syncPrimaryColor('#06b6d4')"></div>
                   </div>
                 </div>
-                <div style="margin-top:9px;font-size:11px;color:rgba(255,255,255,0.25)">El cambio se refleja en tiempo real en el Live Preview →</div>
+                <div style="margin-top:9px;font-size:11px;color:rgba(255,255,255,0.32)">Changes are reflected live in the preview →</div>
               </div>
             </div>
           </div>
@@ -1472,13 +1517,6 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
               <div class="toggle-desc">Animate a "..." indicator while the network is processing</div>
             </div>
             <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="toggle-row">
-            <div>
-              <div class="toggle-label">Custom CSS</div>
-              <div class="toggle-desc">Inject custom styles into the widget iframe</div>
-            </div>
-            <div class="toggle" onclick="this.classList.toggle('on')"></div>
           </div>
         </div>
 
@@ -1578,39 +1616,6 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
           </div>
 
           <!-- Avatar -->
-          <div class="avatar-section">
-            <div class="section-label">Agentic Network Avatar</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.36);margin-bottom:12px">Pick a preset or upload your own image</div>
-            <div class="avatar-grid">
-              <!-- Custom upload -->
-              <div class="avatar-upload" id="avatar-upload-btn" title="Upload custom avatar">
-                <input type="file" accept="image/*" onchange="previewAvatar(event)" />
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              </div>
-              <div id="avatar-custom" class="avatar-custom-preview">
-                <img id="avatar-img" src="" alt="Custom" />
-              </div>
-
-              <!-- Presets -->
-              <div class="avatar-preset selected" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)" onclick="selectPreset(this)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              </div>
-              <div class="avatar-preset" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)" onclick="selectPreset(this)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12l2.5 2.5L16 9"/></svg>
-              </div>
-              <div class="avatar-preset" style="background:linear-gradient(135deg,#10b981,#34d399)" onclick="selectPreset(this)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              </div>
-              <div class="avatar-preset" style="background:linear-gradient(135deg,#f59e0b,#f97316)" onclick="selectPreset(this)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="5.5" y2="16.5"/><line x1="12" y1="8" x2="18.5" y2="16.5"/></svg>
-              </div>
-              <div class="avatar-preset" style="background:linear-gradient(135deg,#ec4899,#a855f7)" onclick="selectPreset(this)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              </div>
-            </div>
-            <div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.28)">Supported formats: PNG, JPG, SVG · Max 2MB · Recommended 256×256px</div>
-          </div>
-
         </div>
 
         <!-- ── PREFERENCES ── -->
@@ -1715,8 +1720,8 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
         <div id="tab-embed" class="tab-panel">
 
           <div class="section-label">API Key</div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-            <div style="flex:1;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:9px 13px;font-family:'SF Mono',monospace;font-size:12px;color:rgba(255,255,255,0.38);letter-spacing:0.04em">
+          <div style="display:flex;align-items:stretch;gap:8px;margin-bottom:20px">
+            <div style="flex:1;background:rgba(0,0,0,0.3);border:1px solid var(--bd);border-radius:8px;padding:0 13px;font-family:'SF Mono',ui-monospace,monospace;font-size:12px;color:rgba(255,255,255,0.55);letter-spacing:0.04em;display:flex;align-items:center;height:38px">
               wgt_live_••••••••••••••••••••••••••••••••
             </div>
             <button class="btn btn-ghost" style="white-space:nowrap">
@@ -1745,21 +1750,22 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
                 staging.acme.com<span class="domain-chip-x" onclick="this.parentElement.remove()">×</span>
               </span>
             </div>
-            <div class="domain-add-row">
-              <input id="domain-input" placeholder="Add domain (e.g. example.com)" onkeydown="if(event.key==='Enter')addDomain()" style="flex:1;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.1);border-radius:7px;padding:7px 12px;font-size:12px;color:rgba(255,255,255,0.6);outline:none;font-family:inherit" />
-              <button onclick="addDomain()" style="padding:7px 14px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);border-radius:7px;color:#60a5fa;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap">Add</button>
+            <div class="domain-add-row" style="display:flex;gap:6px;align-items:stretch">
+              <input id="domain-input" placeholder="example.com" onkeydown="if(event.key==='Enter')addDomain()" class="nw-input" style="flex:1" />
+              <button onclick="addDomain()" class="nw-add-btn">
+                <svg viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                Add
+              </button>
             </div>
           </div>
 
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px">
             <div class="section-label" style="margin-bottom:0">Embed Code</div>
-            <select style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:5px 26px 5px 10px;color:rgba(255,255,255,0.75);font-size:12px;font-family:inherit;outline:none;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.3)%22 stroke-width=%222%22%3E%3Cpolyline points=%226 9 12 15 18 9%22%3E%3C/polyline%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 8px center">
+            <select class="dropdown-select" style="width:auto;min-width:96px;padding:7px 32px 7px 12px;font-size:12px;font-weight:600">
               <option>HTML</option><option>React</option><option>Vue</option>
             </select>
           </div>
-          <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.65;position:relative;margin-bottom:20px">
-            <button onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)" style="position:absolute;top:10px;right:10px;padding:4px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:rgba(255,255,255,0.45);font-size:11px;cursor:pointer;font-family:inherit">Copy</button>
-<span style="color:#818cf8">&lt;script</span> <span style="color:#7dd3fc">src</span>=<span style="color:#86efac">"https://widget.aimsos.ai/v1/embed.js"</span><span style="color:#818cf8">&gt;&lt;/script&gt;</span>
+          <pre id="embedCode" style="background:#000;border:1px solid var(--bd);border-radius:10px;padding:14px 48px 14px 16px;font-family:'SF Mono',ui-monospace,monospace;font-size:12px;color:rgba(255,255,255,0.78);line-height:1.65;position:relative;margin:0 0 20px;overflow-x:auto;white-space:pre"><button onclick="copyEmbed(this)" title="Copy embed code" aria-label="Copy embed code" style="position:absolute;top:10px;right:10px;width:32px;height:32px;background:rgba(255,255,255,0.06);border:1px solid var(--bd);border-radius:7px;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;padding:0"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2H3.5A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button><span style="color:#818cf8">&lt;script</span> <span style="color:#7dd3fc">src</span>=<span style="color:#86efac">"https://widget.aimsos.ai/v1/embed.js"</span><span style="color:#818cf8">&gt;&lt;/script&gt;</span>
 
 <span style="color:#818cf8">&lt;aims-widget</span>
   <span style="color:#7dd3fc">widget-id</span>=<span style="color:#86efac">"wgt_Xk9mN2pL3qR7"</span>
@@ -1767,8 +1773,7 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
   <span style="color:#7dd3fc">theme</span>=<span style="color:#86efac">"system"</span>
   <span style="color:#7dd3fc">position</span>=<span style="color:#86efac">"bottom-right"</span>
   <span style="color:#7dd3fc">lang</span>=<span style="color:#86efac">"en"</span>
-<span style="color:#818cf8">&gt;&lt;/aims-widget&gt;</span>
-          </div>
+<span style="color:#818cf8">&gt;&lt;/aims-widget&gt;</span></pre>
 
           <div class="section-label">Environment</div>
           <div class="info-grid">
@@ -3000,6 +3005,18 @@ body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; backgrou
     closeNewWidget();
     renderWidgetList();
     toast(willBeActive ? `Widget "${name}" created` : `Draft "${name}" saved`, 'success');
+  }
+
+  function copyEmbed(btn) {
+    const code = document.getElementById('embedCode')?.innerText || '';
+    if (navigator.clipboard) navigator.clipboard.writeText(code).then(() => toast('Embed code copied','success'));
+    else toast('Embed code copied','success');
+    if (btn) {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 8 7 11 12 5"/></svg>';
+      btn.style.color = 'var(--ok)';
+      setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 1400);
+    }
   }
 
   function copyPubSnippet() {
