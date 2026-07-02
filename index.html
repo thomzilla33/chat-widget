@@ -659,7 +659,7 @@ button:focus-visible {
   --grad-radial:radial-gradient(circle at 61% 68%, rgba(33,115,255,1) 29%, rgba(9,226,171,1) 61%);
 
   /* ── Sidebar DS tokens ── */
-  --sb-bg:rgba(17,26,50,1);               /* Surface/Floating elevated slightly above canvas */
+  --sb-bg:rgba(255,255,255,0.05);         /* 5% white overlay — visible pill on dark canvas */
   --sb-icon-default:rgba(128,175,255,0.90);/* Icon/Primary/Lighter dark */
   --sb-icon-active:rgba(255,255,255,0.70); /* Icon/Neutral/Light dark */
   --sb-text:rgba(255,255,255,1);           /* Text/Negative dark */
@@ -706,7 +706,8 @@ button:focus-visible {
   box-shadow:inset 0 0 0 1px rgba(255,255,255,0.10),var(--sb-shadow-container);
   display:flex;flex-direction:column;
   padding:8px;gap:16px;
-  width:100%;height:100%;overflow:hidden;
+  width:100%;height:100%;
+  /* NO overflow:hidden here — lets active glow escape pill edges cleanly */
   transition:border-radius .22s cubic-bezier(.4,0,.2,1);
 }
 .sidebar.sb-expanded .sb-inner{border-radius:16px}
@@ -832,7 +833,7 @@ button:focus-visible {
   display:flex;align-items:center;gap:8px;
   border:1px solid var(--tb-workspace-border);border-radius:8px;
   padding:2px 4px;cursor:pointer;
-  background:transparent;font-family:inherit;
+  background:rgba(255,255,255,0.06);font-family:inherit;
   transition:border-color .15s,background .15s;
 }
 .tb-left:hover{border-color:var(--tb-avatar-ring);background:rgba(255,255,255,0.04)}
@@ -901,7 +902,7 @@ button:focus-visible {
   width:136px;height:28px;flex-shrink:0;
   display:flex;align-items:center;gap:4px;
   border:1px solid var(--tb-workspace-border);border-radius:8px;
-  padding:2px 4px;cursor:pointer;
+  padding:2px 4px;cursor:pointer;background:rgba(255,255,255,0.06);
   transition:border-color .15s,background .15s;
 }
 .tb-right-zone:hover{border-color:var(--tb-avatar-ring);background:rgba(255,255,255,0.04)}
@@ -1251,14 +1252,14 @@ button:focus-visible {
 
     <div class="sb-nav">
 
-      <!-- Home (Control Tower) — first item gets PanelLeftClose on right (expanded only) -->
-      <button class="sb-item" onclick="toast('Control Tower')" title="Control Tower" aria-label="Control Tower">
+      <!-- Home (Control Tower) — div (not button) to allow inline button child for PanelLeftClose -->
+      <div class="sb-item" onclick="toast('Control Tower')" title="Control Tower" aria-label="Control Tower" role="button" tabindex="0">
         <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5L9 2.5l6.5 6"/><path d="M4 8v7h10V8"/><path d="M7.5 15v-3.5h3V15"/></svg></span>
         <span class="sb-label">Control Tower</span>
         <button class="sb-panel-close" onclick="event.stopPropagation();sbToggle()" aria-label="Collapse sidebar">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><line x1="6" y1="2.5" x2="6" y2="13.5"/><path d="M9 9.5l-2-1.5 2-1.5"/></svg>
         </button>
-      </button>
+      </div>
 
       <!-- Sparkles (Agentic Networks) -->
       <a class="sb-item" href="agentic-studio.html" title="Agentic Networks" aria-label="Agentic Networks">
