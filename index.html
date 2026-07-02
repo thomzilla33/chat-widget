@@ -684,12 +684,14 @@ button:focus-visible {
 }
 
 /* App shell */
-.app{display:flex;flex:1;height:100vh;padding:60px 8px 8px 0;box-sizing:border-box;gap:8px;overflow:hidden;background:var(--bg)}
+.app{display:flex;flex:1;height:100vh;padding:44px 8px 8px 0;box-sizing:border-box;gap:8px;overflow:hidden;background:var(--bg)}
 
 /* ══════════════════════════════════════════════════════
-   SIDEBAR — DS spec: floating pill container, 24×24 icon btns
-   Collapsed: outer 56px, inner pill 40px r-8 with shadow
-   Expanded:  outer 250px, inner pill r-16 gap-16
+   SIDEBAR — DS pixel-perfect spec
+   Collapsed: outer 56px pad:8 · inner r:8 p:8 gap:16
+     → top: PanelLeftOpen toggle btn · then nav items (icon only)
+   Expanded: outer 250px pad:8 · inner r:16 p:8 gap:16
+     → nav items · first item has PanelLeftClose on right
    ══════════════════════════════════════════════════════ */
 .sidebar{
   flex-shrink:0;padding:8px;display:flex;flex-direction:column;
@@ -709,8 +711,19 @@ button:focus-visible {
 }
 .sidebar.sb-expanded .sb-inner{border-radius:16px}
 
+/* Top toggle — PanelLeftOpen (collapsed only) */
+.sb-top-toggle{
+  width:24px;height:24px;flex-shrink:0;border-radius:var(--r8);padding:4px;
+  background:transparent;border:none;color:var(--sb-icon-default);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s,box-shadow .15s,color .15s;
+}
+.sb-top-toggle svg{width:16px;height:16px}
+.sb-top-toggle:hover{background:var(--sb-icon-hover-bg);box-shadow:var(--sb-shadow-hover);color:var(--sb-icon-active)}
+.sidebar.sb-expanded .sb-top-toggle{display:none}
+
 /* Nav list */
-.sb-nav{flex:1;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+.sb-nav{display:flex;flex-direction:column;gap:16px;overflow:hidden}
 
 /* Each nav item row — height 24px */
 .sb-item{
@@ -723,9 +736,10 @@ button:focus-visible {
 .sidebar:not(.sb-expanded) .sb-item{justify-content:center}
 .sidebar.sb-expanded .sb-item{justify-content:flex-start;padding-right:4px}
 
-/* Row hover bg — only in expanded mode */
+/* Row hover bg — expanded only, not on active */
 .sidebar.sb-expanded .sb-item:hover{background:var(--sb-row-hover)}
 .sidebar.sb-expanded .sb-item.active{background:transparent}
+.sidebar.sb-expanded .sb-item.active:hover{background:transparent}
 
 /* Icon button — 24×24, p-4, r-8 */
 .sb-item-icon{
@@ -742,28 +756,40 @@ button:focus-visible {
   box-shadow:var(--sb-shadow-hover);
   color:var(--sb-icon-active);
 }
-/* Active state on icon — radial gradient + glow */
+/* Active state — gradient + glow on icon only */
 .sb-item.active .sb-item-icon{
   background:var(--grad-radial);
   box-shadow:var(--sb-shadow-active);
   color:var(--sb-icon-active);
 }
-.sb-item.active:hover .sb-item-icon{background:var(--grad-radial)}
+.sb-item.active:hover .sb-item-icon{background:var(--grad-radial);box-shadow:var(--sb-shadow-active)}
 
-/* Label — 12px SemiBold */
+/* Label — 12px SemiBold, hidden in collapsed */
 .sb-label{
   font-size:12px;font-weight:600;color:var(--sb-text);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;
-  opacity:0;transition:opacity .15s;pointer-events:none;
+  opacity:0;width:0;transition:opacity .15s;pointer-events:none;
 }
-.sidebar.sb-expanded .sb-label{opacity:1;pointer-events:auto}
+.sidebar.sb-expanded .sb-label{opacity:1;width:auto;pointer-events:auto}
+
+/* Inline collapse btn — PanelLeftClose on first item (expanded only) */
+.sb-panel-close{
+  display:none;width:16px;height:16px;flex-shrink:0;
+  background:transparent;border:none;cursor:pointer;
+  color:var(--sb-icon-default);padding:0;
+  align-items:center;justify-content:center;
+  transition:opacity .15s;
+}
+.sb-panel-close svg{width:16px;height:16px}
+.sb-panel-close:hover{opacity:0.7}
+.sidebar.sb-expanded .sb-panel-close{display:flex}
 
 /* Chevron right (hasChildren) */
 .sb-chevron{
   width:16px;height:16px;flex-shrink:0;color:var(--sb-icon-default);
-  opacity:0;transition:opacity .12s,color .12s;
+  display:none;
 }
-.sidebar.sb-expanded .sb-chevron{opacity:1}
+.sidebar.sb-expanded .sb-chevron{display:block}
 .sb-item.active .sb-chevron{color:var(--sb-chevron-active)}
 
 /* Sub-items */
@@ -782,58 +808,48 @@ button:focus-visible {
 .sb-divider{height:1px;background:var(--sb-separator);margin:0;flex-shrink:0}
 .sidebar:not(.sb-expanded) .sb-divider{width:24px;margin:0 auto}
 
-/* Bottom toggle button — reuses icon-btn pattern */
-.sb-bottom{flex-shrink:0;display:flex;flex-direction:column}
-.sb-toggle{
-  display:flex;align-items:center;height:24px;width:24px;border-radius:var(--r8);
-  background:transparent;border:none;color:var(--sb-icon-default);cursor:pointer;
-  font-family:inherit;padding:4px;
-  transition:color .12s,background .15s,box-shadow .15s;flex-shrink:0;
-}
-.sb-toggle:hover{background:var(--sb-icon-hover-bg);box-shadow:var(--sb-shadow-hover);color:var(--sb-icon-active)}
-.sidebar.sb-expanded .sb-toggle{width:100%;justify-content:flex-start;gap:8px;padding:0 4px 0 0}
-.sb-toggle-icon{width:16px;height:16px;flex-shrink:0;transition:transform .22s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:center}
-.sidebar.sb-expanded .sb-toggle-icon{transform:rotate(180deg)}
-.sb-toggle-label{font-size:12px;font-weight:600;color:var(--sb-text);opacity:0;transition:opacity .12s;white-space:nowrap}
-.sidebar.sb-expanded .sb-toggle-label{opacity:1}
-
 /* ══════════════════════════════════════════════════════
-   TOPBAR — DS spec tokens applied
+   TOPBAR — DS pixel-perfect spec
+   Total height: 36px (4px top space + 28px content + 4px divider)
+   LEFT zone: 140×28px · CENTER: 250×24px · RIGHT: 232×28px
    ══════════════════════════════════════════════════════ */
 .topbar{
-  position:fixed;top:0;left:0;right:0;height:52px;
-  display:flex;align-items:center;gap:10px;padding:0 16px;
-  border-bottom:1px solid var(--tb-divider);flex-shrink:0;z-index:20;
-  background:rgba(10,14,26,0.80);
+  position:fixed;top:0;left:0;right:0;height:36px;
+  display:flex;flex-direction:column;z-index:20;
+  background:rgba(10,14,26,0.92);
   backdrop-filter:blur(20px) saturate(1.8);
   -webkit-backdrop-filter:blur(20px) saturate(1.8);
 }
-.tb-left{flex:1;display:flex;align-items:center;gap:6px}
-
-/* Workspace zone — Border/Primary/Subtle border */
-.tb-launcher{
-  display:flex;align-items:center;gap:8px;height:28px;padding:0 8px 0 6px;
-  border-radius:var(--r8);
-  background:transparent;
-  border:1px solid var(--tb-workspace-border);
-  cursor:pointer;color:var(--t1);
-  transition:background .15s,border-color .15s;
-  flex-shrink:0;position:relative;font-family:inherit;
+.tb-content{
+  display:flex;align-items:center;justify-content:space-between;
+  height:28px;margin-top:4px;padding:0 8px;
 }
-.tb-launcher:hover{background:rgba(255,255,255,0.04);border-color:var(--tb-avatar-ring)}
+.tb-bottom-border{flex:1;border-bottom:1px solid var(--tb-divider)}
 
-/* Logo pill — radial gradient */
-.tb-launcher-logo{
-  width:20px;height:20px;border-radius:6px;
+/* LEFT zone — 140×28 workspace selector */
+.tb-left{
+  width:140px;height:28px;flex-shrink:0;position:relative;
+  display:flex;align-items:center;gap:8px;
+  border:1px solid var(--tb-workspace-border);border-radius:8px;
+  padding:2px 4px;cursor:pointer;
+  background:transparent;font-family:inherit;
+  transition:border-color .15s,background .15s;
+}
+.tb-left:hover{border-color:var(--tb-avatar-ring);background:rgba(255,255,255,0.04)}
+.tb-ws-avatar{
+  width:16px;height:16px;border-radius:50%;flex-shrink:0;
   background:var(--grad-radial);
   display:flex;align-items:center;justify-content:center;
-  font-size:9px;font-weight:900;color:#fff;flex-shrink:0;letter-spacing:-.3px;
+  font-size:6px;font-weight:900;color:#fff;letter-spacing:-.3px;
 }
-.tb-launcher-name{font-size:12px;font-weight:600;color:var(--t1);white-space:nowrap}
-.tb-launcher-chevron{color:var(--t3);flex-shrink:0;transition:transform .15s}
-.tb-launcher.sw-open .tb-launcher-chevron{transform:rotate(180deg)}
+.tb-ws-name{
+  font-size:10px;font-weight:600;color:var(--t1);
+  flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.tb-ws-chevron{width:12px;height:12px;flex-shrink:0;color:var(--t3);transition:transform .15s}
+.tb-left.sw-open .tb-ws-chevron{transform:rotate(180deg)}
 
-/* Studio switcher dropdown */
+/* Studio switcher dropdown (reused) */
 .studio-sw{position:absolute;top:calc(100% + 6px);left:0;width:248px;background:rgba(22,22,22,1);border:1px solid rgba(255,255,255,0.10);border-radius:12px;box-shadow:0 20px 56px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04);z-index:200;overflow:hidden;opacity:0;transform:translateY(-6px) scale(0.97);pointer-events:none;transition:opacity .15s cubic-bezier(.4,0,.2,1),transform .15s cubic-bezier(.4,0,.2,1)}
 .studio-sw.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
 .studio-sw-hd{padding:12px 14px 8px;border-bottom:1px solid rgba(255,255,255,0.06)}
@@ -847,41 +863,57 @@ button:focus-visible {
 .studio-item-desc{font-size:11px;color:var(--t3);margin-top:1px}
 .studio-item-badge{width:16px;height:16px;flex-shrink:0;color:var(--pri)}
 
-/* Search — DS tokens */
-.tb-search{width:300px;flex-shrink:0;position:relative}
-.tb-search input{
-  width:100%;height:28px;
+/* CENTER zone — 250×24px search trigger */
+.tb-search{
+  width:250px;height:24px;flex-shrink:0;
+  display:flex;align-items:center;gap:6px;padding:0 8px;
   background:var(--tb-search-bg);
-  border:1px solid var(--tb-search-border);
-  border-radius:var(--r8);padding:0 12px 0 30px;
-  color:var(--t1);font-size:12px;outline:none;
-  transition:border-color .15s,background .15s;font-family:inherit;
+  border:1px solid var(--tb-search-border);border-radius:6px;cursor:text;
+  transition:border-color .15s,background .15s;
 }
-.tb-search input:focus{border-color:var(--pri-bd);background:rgba(43,127,255,0.04)}
-.tb-search input::placeholder{color:var(--t4)}
-.tb-search-ic{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--t4);pointer-events:none}
+.tb-search:hover{background:rgba(255,255,255,0.12)}
+.tb-search-ic{color:var(--t4);flex-shrink:0}
+.tb-search span{font-size:11px;color:var(--t4);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none}
 
-/* Right zone */
-.tb-right{display:flex;align-items:center;gap:2px;flex:1;justify-content:flex-end}
-.tb-right .icon-btn{
-  width:28px;height:28px;border-radius:var(--r8);
+/* RIGHT zone — 232×28px */
+.tb-right{width:232px;height:28px;flex-shrink:0;display:flex;align-items:center;gap:8px}
+
+/* Sub-A: 3 icon buttons 80×24, gap:4 */
+.tb-actions{width:80px;height:24px;display:flex;align-items:center;gap:4px}
+.tb-icon-btn{
+  width:24px;height:24px;border-radius:4px;flex-shrink:0;
   background:transparent;border:none;color:rgba(255,255,255,0.70);
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:background .1s,color .1s;
 }
-.tb-right .icon-btn:hover{background:var(--tb-icon-hover-bg);color:var(--t1)}
+.tb-icon-btn:hover{background:var(--tb-icon-hover-bg);color:var(--t1)}
+.tb-icon-btn.ai{
+  background:var(--grad-radial);color:#fff;border-radius:8px;
+  box-shadow:4px 8px 12px 8px rgba(9,226,171,0.16);
+}
+.tb-icon-btn.ai:hover{opacity:0.85}
 
-/* Avatar — gradient bg + primary ring */
-.avatar-sm{
-  width:28px;height:28px;border-radius:50%;
+/* Vertical divider */
+.tb-vdivider{width:1px;height:28px;background:var(--tb-divider);flex-shrink:0}
+
+/* Sub-B: company + user — 136×28px same border as left zone */
+.tb-right-zone{
+  width:136px;height:28px;flex-shrink:0;
+  display:flex;align-items:center;gap:4px;
+  border:1px solid var(--tb-workspace-border);border-radius:8px;
+  padding:2px 4px;cursor:pointer;
+  transition:border-color .15s,background .15s;
+}
+.tb-right-zone:hover{border-color:var(--tb-avatar-ring);background:rgba(255,255,255,0.04)}
+.tb-company-name{font-size:10px;color:var(--t2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-user-avatar{
+  width:16px;height:16px;border-radius:50%;flex-shrink:0;
   background:var(--grad-radial);
   display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:700;color:#fff;cursor:pointer;flex-shrink:0;
-  box-shadow:0 0 0 2px var(--tb-avatar-ring);
+  font-size:5px;font-weight:700;color:#fff;
+  transition:box-shadow .15s;
 }
-
-/* Topbar vertical divider between zones */
-.tb-divider-v{width:1px;height:16px;background:var(--tb-divider);flex-shrink:0;margin:0 4px}
+.tb-right-zone:hover .tb-user-avatar{box-shadow:0 0 0 1.5px var(--tb-avatar-ring)}
 
 /* Make .view fill the remaining space inside .app */
 .view.active{flex:1;min-width:0;height:100%}
@@ -1208,16 +1240,24 @@ button:focus-visible {
 <!-- ════════ APP SHELL (ported from agentic-studio) ════════ -->
 <div class="app">
 
-<!-- ─── SIDEBAR ─── -->
+<!-- ─── SIDEBAR — DS pixel-perfect ─── -->
 <nav class="sidebar" id="appSidebar" aria-label="Main navigation">
   <div class="sb-inner">
 
+    <!-- Collapsed: PanelLeftOpen toggle at top (hidden when expanded) -->
+    <button class="sb-top-toggle" onclick="sbToggle()" aria-label="Expand sidebar">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><line x1="6" y1="2.5" x2="6" y2="13.5"/><path d="M9 6.5l2 1.5-2 1.5"/></svg>
+    </button>
+
     <div class="sb-nav">
 
-      <!-- Home (Control Tower) -->
+      <!-- Home (Control Tower) — first item gets PanelLeftClose on right (expanded only) -->
       <button class="sb-item" onclick="toast('Control Tower')" title="Control Tower" aria-label="Control Tower">
         <span class="sb-item-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5L9 2.5l6.5 6"/><path d="M4 8v7h10V8"/><path d="M7.5 15v-3.5h3V15"/></svg></span>
         <span class="sb-label">Control Tower</span>
+        <button class="sb-panel-close" onclick="event.stopPropagation();sbToggle()" aria-label="Collapse sidebar">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><line x1="6" y1="2.5" x2="6" y2="13.5"/><path d="M9 9.5l-2-1.5 2-1.5"/></svg>
+        </button>
       </button>
 
       <!-- Sparkles (Agentic Networks) -->
@@ -1277,24 +1317,17 @@ button:focus-visible {
 
     </div>
 
-    <!-- Bottom: collapse toggle -->
-    <div class="sb-bottom">
-      <button class="sb-toggle" id="sbToggleBtn" onclick="sbToggle()" aria-label="Toggle sidebar" aria-expanded="true">
-        <span class="sb-toggle-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><line x1="6" y1="2.5" x2="6" y2="13.5"/></svg></span>
-        <span class="sb-toggle-label">Collapse</span>
-      </button>
-    </div>
-
   </div>
 </nav>
 
-<!-- ─── TOPBAR ─── -->
+<!-- ─── TOPBAR — DS pixel-perfect: 36px ─── -->
 <div class="topbar">
-  <div class="tb-left">
-    <button class="tb-launcher" id="studioLauncher" onclick="toggleStudioSw(event)" aria-label="Switch studio" aria-haspopup="true">
-      <div class="tb-launcher-logo">AS</div>
-      <span class="tb-launcher-name">AIMS OS</span>
-      <svg class="tb-launcher-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="tb-content">
+    <!-- LEFT: workspace zone 140×28 -->
+    <button class="tb-left" id="studioLauncher" onclick="toggleStudioSw(event)" aria-label="Switch workspace" aria-haspopup="true">
+      <div class="tb-ws-avatar">AS</div>
+      <span class="tb-ws-name">AIMS OS</span>
+      <svg class="tb-ws-chevron" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <div class="studio-sw" id="studioSw" role="menu">
         <div class="studio-sw-hd"><span class="studio-sw-title">AIMS-OS Platform</span></div>
         <a class="studio-item" href="agentic-studio.html" role="menuitem">
@@ -1309,10 +1342,6 @@ button:focus-visible {
           <div class="studio-item-ico" style="background:linear-gradient(135deg,#05DF72 0%,#059669 100%)">GS</div>
           <div class="studio-item-info"><div class="studio-item-name">Governance Studio</div><div class="studio-item-desc">Knowledge &amp; policies</div></div>
         </a>
-        <a class="studio-item" href="voice-channel-ux.html" role="menuitem">
-          <div class="studio-item-ico" style="background:linear-gradient(135deg,#FDC700 0%,#D97706 100%)">VC</div>
-          <div class="studio-item-info"><div class="studio-item-name">Voice Channel UX</div><div class="studio-item-desc">Call routing &amp; handoff</div></div>
-        </a>
         <a class="studio-item s-active" href="chat-widget.html" role="menuitem">
           <div class="studio-item-ico" style="background:linear-gradient(135deg,#0EA5E9 0%,#06B6D4 100%)">CW</div>
           <div class="studio-item-info"><div class="studio-item-name">Chat Widget</div><div class="studio-item-desc">Web chat builder</div></div>
@@ -1320,19 +1349,32 @@ button:focus-visible {
         </a>
       </div>
     </button>
+
+    <!-- CENTER: search 250×24 -->
+    <div class="tb-search" role="button" aria-label="Search AIMS-OS Platform">
+      <svg class="tb-search-ic" width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5L12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <span>Search in AIMS-OS Platform...</span>
+    </div>
+
+    <!-- RIGHT: 232×28 -->
+    <div class="tb-right">
+      <!-- Sub-A: 3 action btns 80×24 -->
+      <div class="tb-actions">
+        <button class="tb-icon-btn ai" title="AI Assistant"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.4 3.9L13.5 7l-4.1 1.6L8 13l-1.4-4.4L2.5 7l4.1-1.6L8 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
+        <button class="tb-icon-btn" title="Notifications"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2a4 4 0 014 4c0 3 1 4 1 4H3s1-1 1-4a4 4 0 014-4zM6.5 12.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
+        <button class="tb-icon-btn" title="Settings"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
+      </div>
+      <!-- Divider -->
+      <div class="tb-vdivider"></div>
+      <!-- Sub-B: company + user 136×28 -->
+      <div class="tb-right-zone">
+        <div class="tb-ws-avatar">AO</div>
+        <span class="tb-company-name">AIMS OS</span>
+        <div class="tb-user-avatar">TH</div>
+      </div>
+    </div>
   </div>
-  <div class="tb-search">
-    <svg class="tb-search-ic" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5L12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-    <input placeholder="Search in AIMS-OS Platform..." />
-  </div>
-  <div class="tb-right">
-    <button class="icon-btn" title="AI Assistant" style="background:var(--grad-radial);color:#fff;width:28px;height:28px;border-radius:var(--r8)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.4 3.9L13.5 7l-4.1 1.6L8 13l-1.4-4.4L2.5 7l4.1-1.6L8 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
-    <div class="tb-divider-v"></div>
-    <button class="icon-btn" title="Notifications"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 2a4 4 0 014 4c0 3 1 4 1 4H3s1-1 1-4a4 4 0 014-4zM6.5 12.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
-    <button class="icon-btn" title="Settings"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
-    <div class="tb-divider-v"></div>
-    <div class="avatar-sm">TH</div>
-  </div>
+  <div class="tb-bottom-border"></div>
 </div>
 
 <!-- ── LIST VIEW (default landing) ── -->
@@ -2754,23 +2796,14 @@ button:focus-visible {
   /* ── Sidebar collapse / expand (ported from agentic-studio) ── */
   function sbToggle() {
     const sb = document.getElementById('appSidebar');
-    const btn = document.getElementById('sbToggleBtn');
-    const expanded = sb.classList.toggle('sb-expanded');
-    btn.setAttribute('aria-expanded', expanded);
-    btn.querySelector('.sb-toggle-label').textContent = expanded ? 'Collapse' : 'Expand';
-    try { localStorage.setItem('sb_expanded', expanded ? '1' : '0'); } catch(e) {}
+    sb.classList.toggle('sb-expanded');
+    try { localStorage.setItem('sb_expanded', sb.classList.contains('sb-expanded') ? '1' : '0'); } catch(e) {}
   }
   function sbInit() {
     try {
       const stored = localStorage.getItem('sb_expanded');
-      if (stored === '1') {
-        const sb = document.getElementById('appSidebar');
-        const btn = document.getElementById('sbToggleBtn');
-        if (sb) {
-          sb.classList.add('sb-expanded');
-          if (btn) { btn.setAttribute('aria-expanded','true'); btn.querySelector('.sb-toggle-label').textContent='Collapse'; }
-        }
-      }
+      const sb = document.getElementById('appSidebar');
+      if (stored === '1' && sb) sb.classList.add('sb-expanded');
     } catch(e) {}
   }
   document.addEventListener('DOMContentLoaded', sbInit);
