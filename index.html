@@ -734,7 +734,7 @@ button:focus-visible {
   transition:background .12s;flex-shrink:0;border-radius:var(--r8);
   padding:0;gap:8px;
 }
-.sidebar:not(.sb-expanded) .sb-item{justify-content:center}
+.sidebar:not(.sb-expanded) .sb-item{justify-content:center;gap:0}
 .sidebar.sb-expanded .sb-item{justify-content:flex-start;padding-right:4px}
 
 /* Row hover bg — expanded only, not on active */
@@ -769,6 +769,7 @@ button:focus-visible {
 .sb-label{
   font-size:12px;font-weight:600;color:var(--sb-text);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;
+  min-width:0;flex-shrink:1;
   opacity:0;width:0;transition:opacity .15s;pointer-events:none;
 }
 .sidebar.sb-expanded .sb-label{opacity:1;width:auto;pointer-events:auto}
